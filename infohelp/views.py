@@ -120,9 +120,16 @@ def cadastro(request):
     return render(request, "cadastro.html")
 
 
-#Teste das páginas de gerenciamento
 def testecursos(request):
-    return render(request, "gerencia/cadastrar_curso.html")
+    if request.method == 'POST':
+        form = CursoForm(request.POST, request.FILES)
+        if form.is_valid():
+            curso = form.save(commit=False)
+            curso.save()
+            return redirect('listar_cursos')
+    else:
+        form = CursoForm()
+    return render(request, "gerencia/cadastrar_curso.html", {'form': form})
 
 def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")

@@ -8,30 +8,7 @@
         <main class="flex-1 p-8 overflow-y-auto">
             <div class="max-w-4xl mx-auto">
 
-                <!-- Breadcrumbs -->
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <a
-                        href="#"
-                        class="text-gray-500 dark:text-gray-400 text-sm hover:text-primary dark:hover:text-primary"
-                    >
-                        Painel
-                    </a>
 
-                    <span class="text-gray-500 dark:text-gray-400">/</span>
-
-                    <a
-                        href="#"
-                        class="text-gray-500 dark:text-gray-400 text-sm hover:text-primary dark:hover:text-primary"
-                    >
-                        Cursos
-                    </a>
-
-                    <span class="text-gray-500 dark:text-gray-400">/</span>
-
-                    <span class="text-gray-900 dark:text-white text-sm">
-                        Novo Curso
-                    </span>
-                </div>
 
                 <!-- Heading -->
                 <div class="flex flex-wrap justify-between items-center mb-8">
@@ -44,127 +21,71 @@
                 <div class="bg-white dark:bg-background-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
                     <form
                         method="POST"
-                        action="#"
+                        action="{% url 'testecursos' %}"
+                        enctype="multipart/form-data"
                         class="flex flex-col divide-y divide-gray-200 dark:divide-gray-800"
                     >
-                        <!-- Basic Info -->
+                        {% csrf_token %}
+
                         <div class="p-6">
                             <h3 class="text-gray-900 dark:text-white text-lg font-bold mb-6">
-                                Informações Básicas
+                                Informações do Curso
                             </h3>
 
                             <div class="grid grid-cols-1 gap-6">
-
-                                <!-- Title -->
+                                {{ form.non_field_errors }}
+                                {{ form.titulo.errors }}
                                 <label class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">
-                                        Título do curso
-                                    </p>
-                                    <input
-                                        class="form-input rounded-lg border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 text-gray-900 dark:text-white h-12 px-4 text-sm focus:ring-primary/50 focus:outline-0 focus:border-primary dark:focus:border-primary"
-                                        placeholder="Ex: Introdução ao Tailwind CSS"
-                                    />
+                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Título do curso</p>
+                                    {{ form.titulo }}
                                 </label>
 
-                                <!-- Description -->
                                 <label class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">
-                                        Descrição
-                                    </p>
-                                    <textarea
-                                        class="form-textarea rounded-lg border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 text-gray-900 dark:text-white min-h-32 p-4 text-sm focus:ring-primary/50 focus:outline-0 focus:border-primary dark:focus:border-primary"
-                                        placeholder="Descreva os objetivos e o conteúdo do curso."
-                                    ></textarea>
+                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Descrição</p>
+                                    {{ form.descricao }}
                                 </label>
 
-                                <!-- Image Upload -->
-                                <div class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">
-                                        Imagem de capa
-                                    </p>
-
-                                    <div class="flex items-center justify-center w-full">
-                                        <label
-                                            for="dropzone-file"
-                                            class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-primary/10"
-                                        >
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                                <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 text-4xl mb-4">cloud_upload</span>
-                                                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                                    <span class="font-semibold">Clique para fazer upload</span> ou arraste e solte
-                                                </p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                    PNG, JPG ou GIF (MAX. 800x400px)
-                                                </p>
-                                            </div>
-
-                                            <input id="dropzone-file" type="file" class="hidden" />
-                                        </label>
-                                    </div>
-                                </div>
-
+                                <label class="flex flex-col">
+                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Imagem de capa</p>
+                                    {{ form.imagem }}
+                                </label>
                             </div>
                         </div>
 
-                        <!-- Metadata -->
                         <div class="p-6">
                             <h3 class="text-gray-900 dark:text-white text-lg font-bold mb-6">
                                 Metadados
                             </h3>
 
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-
-                                <!-- Category -->
                                 <label class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">
-                                        Categoria
-                                    </p>
-                                    <select
-                                        class="form-select rounded-lg border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 text-gray-900 dark:text-white h-12 px-4 text-sm focus:ring-primary/50 focus:border-primary dark:focus:border-primary"
-                                    >
-                                        <option>Programação</option>
-                                        <option>Design</option>
-                                        <option>Redes</option>
-                                        <option>Marketing Digital</option>
-                                    </select>
+                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Categoria</p>
+                                    {{ form.categoria }}
                                 </label>
 
-                                <!-- Difficulty -->
                                 <label class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">
-                                        Nível de Dificuldade
-                                    </p>
-                                    <select
-                                        class="form-select rounded-lg border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 text-gray-900 dark:text-white h-12 px-4 text-sm focus:ring-primary/50 focus:border-primary dark:focus:border-primary"
-                                    >
-                                        <option>Iniciante</option>
-                                        <option>Intermediário</option>
-                                        <option>Avançado</option>
-                                    </select>
+                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Nível de Dificuldade</p>
+                                    {{ form.dificuldade }}
                                 </label>
 
-                                <!-- Duration -->
                                 <label class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">
-                                        Duração
-                                    </p>
-                                    <input
-                                        class="form-input rounded-lg border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-gray-800 text-gray-900 dark:text-white h-12 px-4 text-sm focus:ring-primary/50 focus:border-primary dark:focus:border-primary"
-                                        placeholder="Ex: 10 horas"
-                                    />
+                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Duração (horas)</p>
+                                    {{ form.carga_horaria }}
                                 </label>
-
                             </div>
                         </div>
 
                         <!-- Buttons -->
                         <div class="flex items-center justify-end gap-4 p-6">
-                            <button
-                                type="button"
-                                class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                            >
-                                Cancelar
-                            </button>
+
+                            <a href="{% url 'listar_cursos' %}">
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                                >
+                                    Cancelar
+                                </button>
+                            </a>
 
                             <button
                                 type="submit"
@@ -172,6 +93,7 @@
                             >
                                 Salvar Curso
                             </button>
+
                         </div>
 
                     </form>
@@ -180,5 +102,6 @@
             </div>
         </main>
 {% endblock content %}
+
 
         
