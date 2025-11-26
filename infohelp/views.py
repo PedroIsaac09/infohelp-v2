@@ -83,7 +83,7 @@ def criar_curso(request):
             return redirect('listar_cursos')
     else:
         form = CursoForm()
-    return render(request, 'criar_curso.html', {'form': form})
+    return render(request, "gerencia/criar_curso.html", {'form': form})
 
 def listar_cursos(request):
     cursos = Curso.objects.all().order_by('-data_criacao')
@@ -98,14 +98,14 @@ def editar_curso(request, pk):
             return redirect('listar_cursos')
     else:
         form = CursoForm(instance=curso)
-    return render(request, 'editar_curso.html', {'form': form, 'curso': curso})
+    return render(request, 'gerencia/editar_curso.html', {'form': form, 'curso': curso})
 
 def deletar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
     if request.method == 'POST':
         curso.delete()
         return redirect('listar_cursos')
-    return render(request, 'deletar_curso.html', {'curso': curso})
+    return render(request, 'gerencia/deletar_curso.html', {'curso': curso})
 
 
 
@@ -119,17 +119,6 @@ def login(request):
 def cadastro(request):
     return render(request, "cadastro.html")
 
-
-def testecursos(request):
-    if request.method == 'POST':
-        form = CursoForm(request.POST, request.FILES)
-        if form.is_valid():
-            curso = form.save(commit=False)
-            curso.save()
-            return redirect('listar_cursos')
-    else:
-        form = CursoForm()
-    return render(request, "gerencia/cadastrar_curso.html", {'form': form})
 
 def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")
