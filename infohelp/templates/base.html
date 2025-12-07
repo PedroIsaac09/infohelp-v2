@@ -49,7 +49,6 @@
 
 <body>
     <!--Barra de navegação-->
-    {% block navbar %}
     <header class="bg-background-light dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -125,17 +124,17 @@
                         Entrar
                     </button>
 
-                    <button class="w-10 h-10 rounded-full bg-cover bg-center"
+                    <a 
+                        href="{% url 'perfil' %}"
+                        class="w-10 h-10 rounded-full bg-cover bg-center"
                         style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCn90S3DHk77amLnctQ25OcM6KJ4X4BGMcJi8uLMuTflN42BtLJlpJFn8ixGWpr-YZdEUkwYqWvVTm-ANpZSo5LFYqRXXOKSPkWqNHI4xN_tSnYV9OElE0lYydgclujLFzmsxI572R6aRjOYj-pTBwv9uIepRwg6dYGN8w_37_5kdgXZ4fTbPNaNwtzEm0AZvQCi5XcPC2bZsKjLwD69Pam_TEL8W0J91um20O9EYYjrPUInxqyPH6juzbR_kyV_q5SCOGnc-IjoHg");'>
-                    </button>
+                    </a>
 
                 </div>
 
             </div>
         </div>
     </header>
-
-    {% endblock navbar %}
 
     <!--Conteúdo-->
     {% block content %}

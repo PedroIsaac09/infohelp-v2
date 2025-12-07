@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil - InfoHelp{% endblock title %}
+
+{% block content %}
+    <main
+          class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
+        >
+          <div class="flex flex-wrap justify-between gap-3 mb-8">
+            <div class="flex min-w-72 flex-col gap-2">
+              <p
+                class="text-slate-900 dark:text-slate-50 text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]"
+              >
+                Configurações do Perfil
+              </p>
+              <p
+                class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal"
+              >
+                Gerencie suas informações pessoais e de segurança.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col md:flex-row gap-8 lg:gap-12">
+            <!-- Side Navigation -->
+            <aside class="w-full md:w-1/4 lg:w-1/5">
+              <div class="flex flex-col gap-2">
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 dark:bg-primary/30"
+                  href="#"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary text-2xl"
+                    style="font-variation-settings: 'FILL' 1"
+                    >person</span
+                  >
+                  <p class="text-primary text-sm font-medium leading-normal">
+                    Editar Perfil
+                  </p>
+                </a>
+
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                  href="#"
+                >
+                  <span
+                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 text-2xl"
+                    >lock</span
+                  >
+                  <p
+                    class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal"
+                  >
+                    Segurança
+                  </p>
+                </a>
+
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                  href="#"
+                >
+                  <span
+                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 text-2xl"
+                    >notifications</span
+                  >
+                  <p
+                    class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal"
+                  >
+                    Notificações
+                  </p>
+                </a>
+
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 warning:hover:bg-slate-800"
+                  href="{% url "index" %}"
+                >
+                  <span
+                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 text-2xl"
+                    style="font-variation-settings: 'FILL' 1"
+                    >logout</span
+                  >
+                  <p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal">
+                    Sair
+                  </p>
+                </a>
+              </div>
+            </aside>
+
+            <!-- Main Content Form -->
+            <div
+              class="flex-1 bg-white dark:bg-slate-900/50 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex flex-col gap-8">
+                <div class="flex items-center gap-6">
+                  <div class="relative">
+                    <div
+                      class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-24 border-2 border-white dark:border-slate-900 shadow-md"
+                      data-alt="Avatar de Ana Lúcia"
+                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBqaANcnIuXLkVl6IWXOX-yygKAXCcED6EEj81bS358T9lMnFEAM_kpBPOpeOVf2YfsVDpxiHsisSX2bJkI88oTk7dCvANkQziPoIM9bUp4-k69Jmee0GlXHWVuS6BNkL95jEsnv8fmSwMR8M2Ie7MKeEHxQQtpVtTvwnskhU4MOYy1sk800iooxfOxbJZk7OXAx9dgNvdC1_3zR35Z7u1X03EQp1vbXYpFVcDCE0rEvPogxlmEuBm7jQOFtfTGhQOmpn-iVhU6ZYg");'
+                    ></div>
+
+                    <button
+                      class="absolute bottom-0 right-0 flex items-center justify-center size-8 rounded-full bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-800 hover:bg-slate-900 dark:hover:bg-white border-2 border-white dark:border-slate-900"
+                    >
+                      <span class="material-symbols-outlined text-base"
+                        >edit</span
+                      >
+                    </button>
+                  </div>
+
+                  <div>
+                    <h3
+                      class="text-slate-800 dark:text-slate-100 text-xl font-bold leading-tight tracking-[-0.015em]"
+                    >
+                      Alterar Foto de Perfil
+                    </h3>
+                    <p
+                      class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal mt-1"
+                    >
+                      PNG, JPG ou GIF até 10MB.
+                    </p>
+                  </div>
+                </div>
+
+                <hr class="border-slate-200 dark:border-slate-800" />
+
+                <!-- Personal Information Section -->
+                <section>
+                  <h2
+                    class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
+                  >
+                    Informações Pessoais
+                  </h2>
+
+                  <div class="grid grid-cols-1 gap-6">
+                    <div>
+                      <label
+                        for="fullName"
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >Nome Completo</label
+                      >
+                      <input
+                        id="fullName"
+                        type="text"
+                        placeholder="Seu nome completo"
+                        value="Ana Lúcia"
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        for="email"
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >Email</label
+                      >
+                      <input
+                        id="email"
+                        type="email"
+                        readonly
+                        value="ana.lucia@email.com"
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed"
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <hr class="border-slate-200 dark:border-slate-800" />
+
+                <!-- Security Section -->
+                <section>
+                  <h2
+                    class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
+                  >
+                    Alterar Senha
+                  </h2>
+
+                  <div class="grid grid-cols-1 gap-6">
+                    <div>
+                      <label
+                        for="currentPassword"
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >Senha Atual</label
+                      >
+                      <input
+                        id="currentPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        for="newPassword"
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >Nova Senha</label
+                      >
+                      <input
+                        id="newPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        for="confirmPassword"
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >Confirmar Nova Senha</label
+                      >
+                      <input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-3 pt-4">
+                  <button
+                    class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5"
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white hover:bg-primary/90 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5"
+                  >
+                    Salvar Alterações
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- End main card -->
+          </div>
+        </main>
+{% endblock content %}

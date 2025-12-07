@@ -20,6 +20,7 @@ urlpatterns = [
     
     path('biblioteca/', views.biblioteca, name="biblioteca"),
 
+    path('perfil/', views.perfil, name="perfil"),
     #Teste das páginas de gerenciamento
     path('testegerencia/', views.testegerencia, name="testegerencia"),
 ]

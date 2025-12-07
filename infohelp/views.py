@@ -113,12 +113,8 @@ def deletar_curso(request, pk):
 def biblioteca(request):
     return render(request, "biblioteca.html")
 
-def login(request):
-    return render(request, "login.html")
-
-def cadastro(request):
-    return render(request, "cadastro.html")
-
-
 def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")
+
+def perfil(request):
+    return render(request, "perfil.html")
