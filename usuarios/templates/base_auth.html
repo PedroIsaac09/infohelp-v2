@@ -5,30 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
 
-    <!-- Tailwind CDN -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     {% load crispy_forms_tags %}
+
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
 
-<nav class="bg-white shadow p-4 flex justify-between">
-    <div><a href="/" class="font-bold">Meu Projeto</a></div>
+    <!-- Navbar -->
+    <nav class="w-full px-8 py-4 flex justify-between items-centers">
+        <h1 class="text-2xl font-extrabold tracking-wide">
+            Info<span class="text-blue-500">Help</span>
+        </h1>
 
-    <div>
-        {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}" class="text-red-500 font-semibold">Sair</a>
-        {% else %}
-            <a href="{% url 'login' %}" class="mr-4">Login</a>
-            <a href="{% url 'register' %}">Cadastro</a>
-        {% endif %}
-    </div>
-</nav>
+        <div class="space-x-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'index' %}"
+                   class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition font-semibold">
+                   Sair
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}"
+                   class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition font-semibold">
+                   Login
+                </a>
+                <a href="{% url 'register' %}"
+                   class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition font-semibold">
+                   Cadastrar
+                </a>
+            {% endif %}
+        </div>
+    </nav>
 
-<div class="container mx-auto mt-10">
-    {% block content %}
-    {% endblock %}
-</div>
+    <!-- Conteúdo -->
+    <main class="flex justify-center items-center min-h-[85vh] px-4">
+        {% block content %}{% endblock %}
+    </main>
 
 </body>
 </html>

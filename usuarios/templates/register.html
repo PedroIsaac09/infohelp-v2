@@ -4,20 +4,25 @@
 {% block title %}Cadastro{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
-    <h2 class="text-2xl font-bold mb-4 text-center">Criar Conta</h2>
+<div class="w-full max-w-md bg-gray-800 bg-opacity-60 backdrop-blur shadow-2xl p-8 rounded-2xl border border-gray-700 animate-fade-in">
 
-    <form method="post">
+    <h2 class="text-3xl font-bold text-center mb-6">
+        Crie sua Conta
+    </h2>
+
+    <form method="post" class="space-y-4">
         {% csrf_token %}
         {{ form|crispy }}
 
-        <button class="mt-4 w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">
+        <button class="w-full py-2 rounded-lg bg-green-600 hover:bg-green-700 shadow-lg transition text-lg font-semibold">
             Registrar
         </button>
     </form>
 
-    <p class="mt-4 text-center">
-        Já tem conta? <a href="{% url 'login' %}" class="text-blue-600">Entrar</a>
+    <p class="text-center mt-6 text-gray-300">
+        Já possui conta?
+        <a href="{% url 'login' %}" class="text-blue-400 hover:underline">Entrar</a>
     </p>
+
 </div>
 {% endblock %}
