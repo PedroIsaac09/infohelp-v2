@@ -1,0 +1,23 @@
+{% extends "base_auth.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Criar Conta</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <button class="mt-4 w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">
+            Registrar
+        </button>
+    </form>
+
+    <p class="mt-4 text-center">
+        Já tem conta? <a href="{% url 'login' %}" class="text-blue-600">Entrar</a>
+    </p>
+</div>
+{% endblock %}
