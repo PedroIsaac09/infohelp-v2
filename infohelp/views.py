@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Curso, Dificuldade,Categoria
-from .forms import CursoForm, DificuldadeForm,CategoriaForm
+from .models import Curso, Dificuldade, Categoria, Aula
+from .forms import CursoForm, DificuldadeForm, CategoriaForm
+from .forms import AulaForm 
 
 def criar_categoria(request):
-    if request.method == 'POST':
+    if request.method == 'POST':    
         form = CategoriaForm(request.POST)
         if form.is_valid():
             form.save()
@@ -38,7 +39,7 @@ def criar_dificuldade(request):
         form = DificuldadeForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('criar_curso')  # ou a página que desejar
+            return redirect('criar_aula')  # ou a página que desejar
     else:
         form = DificuldadeForm()
     return render(request, 'criar_dificuldade.html', {'form': form})
@@ -108,6 +109,79 @@ def deletar_curso(request, pk):
     return render(request, 'gerencia/deletar_curso.html', {'curso': curso})
 
 
+
+
+def criar_aula(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    if request.method == 'POST':
+        form = AulaForm(request.POST, request.FILES)
+        if form.is_valid():
+            aula = form.save(commit=False)
+            aula.curso = curso
+            aula.save()
+            return redirect('listar_aulas', curso_id=curso_id)
+    else:
+        form = AulaForm()
+    return render(request, 'aulas/criar_aula.html', {'form': form, 'curso': curso})
+
+
+def listar_aulas(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    aulas = curso.aulas.all().order_by('ordem')
+    return render(request, 'aulas/listar_aulas.html', {'curso': curso, 'aulas': aulas})
+
+
+def detalhe_aula(request, curso_id, aula_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    aula = get_object_or_404(Aula, pk=aula_id, curso=curso)
+
+    # Preparar URL embed para YouTube (ou retornar a URL direta para outros provedores)
+    video_embed = None
+    if aula.video:
+        from urllib.parse import urlparse, parse_qs
+        parsed = urlparse(aula.video)
+        hostname = parsed.hostname or ''
+        # YouTube watch URL: convert to embed
+        if 'youtube' in hostname or 'youtu.be' in hostname:
+            # handle youtu.be short links
+            if 'youtu.be' in hostname:
+                video_id = parsed.path.lstrip('/')
+            else:
+                qs = parse_qs(parsed.query)
+                video_id = qs.get('v', [None])[0]
+                if not video_id:
+                    # fallback: path may contain /embed/{id}
+                    parts = parsed.path.split('/')
+                    video_id = parts[-1] if parts else None
+            if video_id:
+                video_embed = f'https://www.youtube.com/embed/{video_id}'
+        else:
+            # assume direct embeddable URL (e.g., mp4) or provider-compatible
+            video_embed = aula.video
+
+    return render(request, 'aulas/detalhe_aula.html', {'curso': curso, 'aula': aula, 'video_embed': video_embed})
+
+
+def editar_aula(request, curso_id, aula_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    aula = get_object_or_404(Aula, pk=aula_id, curso=curso)
+    if request.method == 'POST':
+        form = AulaForm(request.POST, request.FILES, instance=aula)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_aulas', curso_id=curso_id)
+    else:
+        form = AulaForm(instance=aula)
+    return render(request, 'aulas/editar_aula.html', {'form': form, 'curso': curso, 'aula': aula})
+
+
+def deletar_aula(request, curso_id, aula_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    aula = get_object_or_404(Aula, pk=aula_id, curso=curso)
+    if request.method == 'POST':
+        aula.delete()
+        return redirect('listar_aulas', curso_id=curso_id)
+    return render(request, 'aulas/deletar_aula.html', {'curso': curso, 'aula': aula})
 
 
 def biblioteca(request):
