@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{ aula.titulo }} - {{ curso.titulo }}{% endblock title %}
+
+{% block content %}
+
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+    <div class="flex flex-col min-h-screen">
+
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="max-w-4xl mx-auto">
+                <!-- Breadcrumb -->
+                <div class="mb-6 flex items-center gap-2 text-sm">
+                    <a href="{% url 'listar_cursos' %}" class="text-primary hover:text-primary/80 transition-colors">Cursos</a>
+                    <span class="text-gray-400">/</span>
+                    <a href="{% url 'listar_aulas' curso.pk %}" class="text-primary hover:text-primary/80 transition-colors">{{ curso.titulo }}</a>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ aula.titulo }}</span>
+                </div>
+
+                <!-- Imagem da Aula -->
+                {% if aula.imagem %}
+                    <div class="mb-8 rounded-xl overflow-hidden shadow-lg">
+                        <img src="{{ aula.imagem.url }}" alt="{{ aula.titulo }}" class="w-full h-96 object-cover">
+                    </div>
+                {% endif %}
+
+                <!-- Cabeçalho -->
+                <div class="mb-8">
+                    <div class="flex items-start justify-between gap-4 mb-4">
+                        <div>
+                            <span class="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-full inline-block">
+                                Aula {{ aula.ordem }}
+                            </span>
+                            <h1 class="text-5xl font-bold text-gray-900 dark:text-white mt-4 tracking-tighter">
+                                {{ aula.titulo }}
+                            </h1>
+                            <p class="text-lg text-gray-600 dark:text-gray-400 mt-2">
+                                {{ curso.titulo }}
+                            </p>
+                        </div>
+                        
+                        <!-- Botões de Ação (Admin) -->
+                        <div class="flex gap-2 flex-shrink-0">
+                            <a href="{% url 'editar_aula' curso.pk aula.pk %}"
+                               class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                               title="Editar aula">
+                                <span class="material-symbols-outlined text-base">edit</span>
+                            </a>
+                            <a href="{% url 'deletar_aula' curso.pk aula.pk %}"
+                               class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors"
+                               title="Deletar aula">
+                                <span class="material-symbols-outlined text-base">delete</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conteúdo Principal -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Conteúdo -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-md p-8 mb-8">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Conteúdo</h2>
+                            <div class="prose prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                                {{ aula.conteudo|linebreaks }}
+                            </div>
+                        </div>
+
+                        <!-- Vídeo -->
+                        {% if video_embed %}
+                            <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-md p-8 mb-8" id="video">
+                                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined">play_circle</span>
+                                    Vídeo da Aula
+                                </h2>
+                                <div class="aspect-video bg-gray-900 rounded-lg overflow-hidden">
+                                    <iframe id="aula-video-iframe" width="100%" height="100%"
+                                            data-src="{{ video_embed }}"
+                                            title="{{ aula.titulo }}"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowfullscreen
+                                            class="w-full h-full">
+                                    </iframe>
+                                </div>
+                            </div>
+                            <script>
+                                (function(){
+                                    const iframe = document.getElementById('aula-video-iframe');
+                                    if(!iframe) return;
+                                    const base = iframe.getAttribute('data-src');
+                                    // set default src (no autoplay)
+                                    iframe.src = base;
+                                    // if url fragment includes #video, autoplay and scroll
+                                    if(window.location.hash && window.location.hash.indexOf('#video') === 0){
+                                        // append autoplay param
+                                        const sep = base.indexOf('?') === -1 ? '?' : '&';
+                                        iframe.src = base + sep + 'autoplay=1';
+                                        // scroll into view smoothly
+                                        try{ document.getElementById('video').scrollIntoView({behavior: 'smooth'}); }catch(e){}
+                                    }
+                                })();
+                            </script>
+                        {% endif %}
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="lg:col-span-1">
+                        <!-- Informações da Aula -->
+                        <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-md p-6 mb-6 sticky top-4">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Informações</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Aula</p>
+                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ aula.ordem }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Curso</p>
+                                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ curso.titulo }}</p>
+                                </div>
+                                {% if curso.categoria %}
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Categoria</p>
+                                        <p class="text-lg font-semibold text-primary">{{ curso.categoria.nome }}</p>
+                                    </div>
+                                {% endif %}
+                                {% if curso.dificuldade %}
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Dificuldade</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ curso.dificuldade.nome }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Aulas do Curso -->
+                        <div class="bg-white dark:bg-gray-800/50 rounded-xl shadow-md p-6">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Outras Aulas</h3>
+                            <div class="space-y-2 max-h-96 overflow-y-auto">
+                                {% for outra_aula in curso.aulas.all %}
+                                    {% if outra_aula.pk != aula.pk %}
+                                        <a href="{% url 'detalhe_aula' curso.pk outra_aula.pk %}"
+                                           class="block p-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors">
+                                            <p class="text-sm font-semibold text-gray-600 dark:text-gray-400">Aula {{ outra_aula.ordem }}</p>
+                                            <p class="text-gray-900 dark:text-white font-medium">{{ outra_aula.titulo }}</p>
+                                        </a>
+                                    {% else %}
+                                        <div class="p-3 rounded-lg bg-primary/10 border-l-4 border-primary">
+                                            <p class="text-sm font-semibold text-primary">Aula {{ outra_aula.ordem }}</p>
+                                            <p class="text-gray-900 dark:text-white font-medium">{{ outra_aula.titulo }}</p>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de Navegação -->
+                <div class="mt-12 flex gap-4">
+                    <a href="{% url 'listar_aulas' curso.pk %}"
+                       class="inline-flex items-center gap-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                        Voltar para Aulas
+                    </a>
+                    <a href="{% url 'listar_cursos' %}"
+                       class="inline-flex items-center gap-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200">
+                        <span class="material-symbols-outlined">home</span>
+                        Voltar para Cursos
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+{% endblock content %}

@@ -36,6 +36,7 @@ class Aula(models.Model):
     titulo = models.CharField(max_length=200)
     conteudo = models.TextField()
     video = models.URLField(blank=True, null=True)
+    imagem = models.ImageField(upload_to='aulas/', blank=True, null=True)
     ordem = models.PositiveIntegerField(help_text='Ordem da aula no curso', default=1)
 
     def __str__(self):

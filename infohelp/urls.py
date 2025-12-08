@@ -18,6 +18,12 @@ urlpatterns = [
     path('cursos/<int:pk>/editar/', views.editar_curso, name='editar_curso'),
     path('cursos/<int:pk>/deletar/', views.deletar_curso, name='deletar_curso'),
     
+    path('cursos/<int:curso_id>/aulas/', views.listar_aulas, name='listar_aulas'),
+    path('cursos/<int:curso_id>/aulas/<int:aula_id>/', views.detalhe_aula, name='detalhe_aula'),
+    path('cursos/<int:curso_id>/aulas/nova/', views.criar_aula, name='criar_aula'),
+    path('cursos/<int:curso_id>/aulas/<int:aula_id>/editar/', views.editar_aula, name='editar_aula'),
+    path('cursos/<int:curso_id>/aulas/<int:aula_id>/deletar/', views.deletar_aula, name='deletar_aula'),
+    
     path('biblioteca/', views.biblioteca, name="biblioteca"),
 
     path('perfil/', views.perfil, name="perfil"),

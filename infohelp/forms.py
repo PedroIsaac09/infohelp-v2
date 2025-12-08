@@ -1,5 +1,5 @@
 from django import forms
-from .models import Curso, Categoria, Dificuldade
+from .models import Curso, Categoria, Dificuldade, Aula
 
 class CategoriaForm(forms.ModelForm):
     class Meta:
@@ -24,3 +24,8 @@ class CursoForm(forms.ModelForm):
             'carga_horaria',
             'ativo'
         ]
+
+class AulaForm(forms.ModelForm):
+    class Meta:
+        model = Aula
+        fields = ['titulo', 'conteudo', 'video', 'imagem', 'ordem']
