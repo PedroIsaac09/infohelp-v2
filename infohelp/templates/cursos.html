@@ -88,10 +88,7 @@
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold shadow">
                                         Editar
                                     </a>
-                                    <a href="{% url 'deletar_curso' curso.pk %}"
-                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold shadow">
-                                        Excluir
-                                    </a>
+                                    <!-- Excluir moved to editar_curso page to show a confirmation modal there -->
                                     {% if user.is_authenticated %}
                                         {% if curso.pk in saved_course_ids %}
                                             <form method="post" action="{% url 'remover_biblioteca' curso.pk %}">
