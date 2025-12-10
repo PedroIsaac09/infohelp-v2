@@ -87,12 +87,26 @@ def criar_curso(request):
         form = CursoForm()
     return render(request, "gerencia/criar_curso.html", {'form': form})
 
+from django.db.models import Q
+
+
 def listar_cursos(request):
-    cursos = Curso.objects.all().order_by('-data_criacao')
+    q = request.GET.get('q', '').strip()
+    cursos = Curso.objects.all()
+    if q:
+        # filter by course title, course description, aula title or aula content
+        cursos = cursos.filter(
+            Q(titulo__icontains=q) |
+            Q(descricao__icontains=q) |
+            Q(aulas__titulo__icontains=q) |
+            Q(aulas__conteudo__icontains=q)
+        ).distinct()
+    cursos = cursos.order_by('-data_criacao')
+
     saved_course_ids = []
     if request.user.is_authenticated:
         saved_course_ids = list(request.user.biblioteca.values_list('curso_id', flat=True))
-    return render(request, 'cursos.html', {'cursos': cursos, 'saved_course_ids': saved_course_ids})
+    return render(request, 'cursos.html', {'cursos': cursos, 'saved_course_ids': saved_course_ids, 'q': q})
 
 def editar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
