@@ -25,6 +25,8 @@ urlpatterns = [
     path('cursos/<int:curso_id>/aulas/<int:aula_id>/deletar/', views.deletar_aula, name='deletar_aula'),
     
     path('biblioteca/', views.biblioteca, name="biblioteca"),
+    path('biblioteca/adicionar/<int:curso_id>/', views.adicionar_biblioteca, name='adicionar_biblioteca'),
+    path('biblioteca/remover/<int:curso_id>/', views.remover_biblioteca, name='remover_biblioteca'),
 
     path('perfil/', views.perfil, name="perfil"),
     #Teste das páginas de gerenciamento

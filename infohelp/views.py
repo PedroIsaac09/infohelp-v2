@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Curso, Dificuldade, Categoria, Aula
 from .forms import CursoForm, DificuldadeForm, CategoriaForm
 from .forms import AulaForm 
@@ -88,7 +89,10 @@ def criar_curso(request):
 
 def listar_cursos(request):
     cursos = Curso.objects.all().order_by('-data_criacao')
-    return render(request, 'cursos.html', {'cursos': cursos})
+    saved_course_ids = []
+    if request.user.is_authenticated:
+        saved_course_ids = list(request.user.biblioteca.values_list('curso_id', flat=True))
+    return render(request, 'cursos.html', {'cursos': cursos, 'saved_course_ids': saved_course_ids})
 
 def editar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
@@ -184,8 +188,30 @@ def deletar_aula(request, curso_id, aula_id):
     return render(request, 'aulas/deletar_aula.html', {'curso': curso, 'aula': aula})
 
 
+@login_required
 def biblioteca(request):
-    return render(request, "biblioteca.html")
+    # List courses saved by the current user
+    items = request.user.biblioteca.select_related('curso').order_by('-data_adicionado')
+    return render(request, 'biblioteca.html', {'items': items})
+
+
+@login_required
+def adicionar_biblioteca(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    # create if not exists
+    from .models import Biblioteca
+    obj, created = Biblioteca.objects.get_or_create(usuario=request.user, curso=curso)
+    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
+    return redirect(next_url)
+
+
+@login_required
+def remover_biblioteca(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    from .models import Biblioteca
+    Biblioteca.objects.filter(usuario=request.user, curso=curso).delete()
+    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
+    return redirect(next_url)
 
 def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")
