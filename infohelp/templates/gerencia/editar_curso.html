@@ -66,11 +66,6 @@
                                     <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Nível de Dificuldade</p>
                                     {{ form.dificuldade }}
                                 </label>
-
-                                <label class="flex flex-col">
-                                    <p class="text-gray-800 dark:text-gray-300 text-sm pb-2">Duração (horas)</p>
-                                    {{ form.carga_horaria }}
-                                </label>
                             </div>
                         </div>
 
@@ -93,6 +88,10 @@
                                 Salvar Alterações
                             </button>
 
+                            <!-- Delete button: navigate to confirmation page (modal-like) -->
+                            <a href="{% url 'deletar_curso' curso.pk %}" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 ml-2">
+                                Excluir Curso
+                            </a>
                         </div>
 
                     </form>
