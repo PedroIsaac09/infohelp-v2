@@ -140,4 +140,6 @@ CRISPY_TEMPLATE_PACK = "tailwind"
 
 # Authentication Redirects
 LOGIN_REDIRECT_URL = "inicio"
-LOGOUT_REDIRECT_URL = "login"
+LOGOUT_REDIRECT_URL = "index"
+# URL name used by `login_required` to redirect anonymous users
+LOGIN_URL = 'login'

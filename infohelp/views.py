@@ -69,6 +69,7 @@ def deletar_dificuldade(request, pk):
 def index(request):
     return render(request, "index.html")
 
+
 def inicio(request):
     return render(request, "inicio.html")
 
@@ -149,6 +150,12 @@ def listar_aulas(request, curso_id):
     return render(request, 'aulas/listar_aulas.html', {'curso': curso, 'aulas': aulas})
 
 
+@login_required
+def inicio(request):
+    return render(request, "inicio.html")
+
+
+@login_required
 def detalhe_aula(request, curso_id, aula_id):
     curso = get_object_or_404(Curso, pk=curso_id)
     aula = get_object_or_404(Aula, pk=aula_id, curso=curso)
@@ -229,6 +236,7 @@ def remover_biblioteca(request, curso_id):
 
 def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")
+
 
 def perfil(request):
     return render(request, "perfil.html")
