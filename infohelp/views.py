@@ -2,7 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Curso, Dificuldade, Categoria, Aula
 from .forms import CursoForm, DificuldadeForm, CategoriaForm
-from .forms import AulaForm 
+from .forms import AulaForm
+from django.db.models import Q
+
+
+
+
+
 
 def criar_categoria(request):
     if request.method == 'POST':    
@@ -31,6 +37,7 @@ def deletar_categoria(request, pk):
         categoria.delete()
         return redirect('listar_categorias')
     return render(request, 'deletar_categoria.html', {'categoria': categoria})
+
 
 
 
@@ -66,16 +73,59 @@ def deletar_dificuldade(request, pk):
 
 
 
+
 def index(request):
     return render(request, "index.html")
 
 
+@login_required
 def inicio(request):
     return render(request, "inicio.html")
 
 
+def testegerencia(request):
+    return render(request, "gerencia/pagina_gerencia.html")
 
 
+def perfil(request):
+    return render(request, "perfil.html")
+
+
+
+
+
+#Biblioteca
+@login_required
+def biblioteca(request):
+    # List courses saved by the current user
+    items = request.user.biblioteca.select_related('curso').order_by('-data_adicionado')
+    return render(request, 'biblioteca.html', {'items': items})
+
+
+@login_required
+def adicionar_biblioteca(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    # create if not exists
+    from .models import Biblioteca
+    obj, created = Biblioteca.objects.get_or_create(usuario=request.user, curso=curso)
+    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
+    return redirect(next_url)
+
+
+@login_required
+def remover_biblioteca(request, curso_id):
+    curso = get_object_or_404(Curso, pk=curso_id)
+    from .models import Biblioteca
+    Biblioteca.objects.filter(usuario=request.user, curso=curso).delete()
+    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
+    return redirect(next_url)
+
+
+
+
+
+#CRUD Cursos
+@login_required
 def criar_curso(request):
     if request.method == 'POST':
         form = CursoForm(request.POST, request.FILES)
@@ -87,8 +137,6 @@ def criar_curso(request):
     else:
         form = CursoForm()
     return render(request, "gerencia/criar_curso.html", {'form': form})
-
-from django.db.models import Q
 
 
 def listar_cursos(request):
@@ -109,6 +157,8 @@ def listar_cursos(request):
         saved_course_ids = list(request.user.biblioteca.values_list('curso_id', flat=True))
     return render(request, 'cursos.html', {'cursos': cursos, 'saved_course_ids': saved_course_ids, 'q': q})
 
+
+@login_required
 def editar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
     if request.method == 'POST':
@@ -120,6 +170,8 @@ def editar_curso(request, pk):
         form = CursoForm(instance=curso)
     return render(request, 'gerencia/editar_curso.html', {'form': form, 'curso': curso})
 
+
+@login_required 
 def deletar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
     if request.method == 'POST':
@@ -130,6 +182,9 @@ def deletar_curso(request, pk):
 
 
 
+
+#CRUD Aulas
+@login_required
 def criar_aula(request, curso_id):
     curso = get_object_or_404(Curso, pk=curso_id)
     if request.method == 'POST':
@@ -148,11 +203,6 @@ def listar_aulas(request, curso_id):
     curso = get_object_or_404(Curso, pk=curso_id)
     aulas = curso.aulas.all().order_by('ordem')
     return render(request, 'aulas/listar_aulas.html', {'curso': curso, 'aulas': aulas})
-
-
-@login_required
-def inicio(request):
-    return render(request, "inicio.html")
 
 
 @login_required
@@ -187,6 +237,7 @@ def detalhe_aula(request, curso_id, aula_id):
     return render(request, 'aulas/detalhe_aula.html', {'curso': curso, 'aula': aula, 'video_embed': video_embed})
 
 
+@login_required
 def editar_aula(request, curso_id, aula_id):
     curso = get_object_or_404(Curso, pk=curso_id)
     aula = get_object_or_404(Aula, pk=aula_id, curso=curso)
@@ -200,6 +251,7 @@ def editar_aula(request, curso_id, aula_id):
     return render(request, 'aulas/editar_aula.html', {'form': form, 'curso': curso, 'aula': aula})
 
 
+@login_required
 def deletar_aula(request, curso_id, aula_id):
     curso = get_object_or_404(Curso, pk=curso_id)
     aula = get_object_or_404(Aula, pk=aula_id, curso=curso)
@@ -207,36 +259,3 @@ def deletar_aula(request, curso_id, aula_id):
         aula.delete()
         return redirect('listar_aulas', curso_id=curso_id)
     return render(request, 'aulas/deletar_aula.html', {'curso': curso, 'aula': aula})
-
-
-@login_required
-def biblioteca(request):
-    # List courses saved by the current user
-    items = request.user.biblioteca.select_related('curso').order_by('-data_adicionado')
-    return render(request, 'biblioteca.html', {'items': items})
-
-
-@login_required
-def adicionar_biblioteca(request, curso_id):
-    curso = get_object_or_404(Curso, pk=curso_id)
-    # create if not exists
-    from .models import Biblioteca
-    obj, created = Biblioteca.objects.get_or_create(usuario=request.user, curso=curso)
-    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
-    return redirect(next_url)
-
-
-@login_required
-def remover_biblioteca(request, curso_id):
-    curso = get_object_or_404(Curso, pk=curso_id)
-    from .models import Biblioteca
-    Biblioteca.objects.filter(usuario=request.user, curso=curso).delete()
-    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
-    return redirect(next_url)
-
-def testegerencia(request):
-    return render(request, "gerencia/pagina_gerencia.html")
-
-
-def perfil(request):
-    return render(request, "perfil.html")
