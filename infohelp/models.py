@@ -27,6 +27,7 @@ class Curso(models.Model):
     imagem = models.ImageField(upload_to='cursos/', blank=True, null=True)
     link_video = models.URLField(blank=True, null=True)
     carga_horaria = models.PositiveIntegerField(help_text='Carga horária em horas', blank=True, null=True)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.titulo
@@ -38,6 +39,7 @@ class Aula(models.Model):
     video = models.URLField(blank=True, null=True)
     imagem = models.ImageField(upload_to='aulas/', blank=True, null=True)
     ordem = models.PositiveIntegerField(help_text='Ordem da aula no curso', default=1)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def __str__(self):
         return f'{self.titulo} ({self.curso.titulo})'

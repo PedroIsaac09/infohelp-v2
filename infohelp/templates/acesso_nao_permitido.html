@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Acesso não permitido{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto mt-24 mb-24 p-6 bg-gradient-to-r from-red-50 via-white to-red-50 rounded-xl shadow-lg border border-red-200">
+  <div class="flex items-start gap-4">
+    <div class="flex-shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V5a1 1 0 10-2 0v2a1 1 0 102 0zm-1 3a1 1 0 00-.993.883L9 11v3a1 1 0 001.993.117L11 14v-3a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+    </div>
+
+    <div>
+      <h1 class="text-2xl font-bold text-red-700">{{ title }}</h1>
+      <p class="mt-2 text-sm text-red-600">{{ subtitle }}</p>
+
+      <div class="mt-4 p-4 bg-red-100 rounded-md border border-red-200">
+        <p class="text-sm text-red-800">{{ detail }}</p>
+      </div>
+
+      <div class="mt-5 flex gap-3">
+        <a href="{% url 'inicio' %}" class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700">Voltar à área pública</a>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'perfil' %}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500">Ir para meu perfil</a>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Sair</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500">Entrar</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <p class="mt-6 text-xs text-gray-500">Se você deveria ter acesso, peça ao administrador para te adicionar ao grupo "Professor".</p>
+</div>
+{% endblock %}

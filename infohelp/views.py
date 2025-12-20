@@ -1,12 +1,34 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponseForbidden
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Curso, Dificuldade, Categoria, Aula
 from .forms import CursoForm, DificuldadeForm, CategoriaForm
 from .forms import AulaForm
 from django.db.models import Q
+
+
+# Mixin customizado para professores — sem depender de django-braces.
+class ProfessorRequiredMixin(UserPassesTestMixin):
+    group_required = 'Professor'
+
+    def test_func(self):
+        user = self.request.user
+        if not user or not user.is_authenticated:
+            return False
+        if user.is_superuser:
+            return True
+        return user.groups.filter(name=self.group_required).exists()
+
+    def handle_no_permission(self):
+        context = {
+            'title': 'Acesso não permitido',
+            'subtitle': 'Ops — você não tem permissão para acessar esta área.',
+            'detail': 'Esta seção é exclusiva para professores. Se você acredita que isto é um erro, entre em contato com a administração.'
+        }
+        return render(self.request, 'acesso_nao_permitido.html', context, status=403)
 
 
 
@@ -129,18 +151,20 @@ def remover_biblioteca(request, curso_id):
 
 # CRUD Cursos (Class-Based Views)
 
-class CursoCreateView(LoginRequiredMixin, CreateView):
+class CursoCreateView(ProfessorRequiredMixin, LoginRequiredMixin, CreateView):
     model = Curso
     form_class = CursoForm
     template_name = 'gerencia/criar_curso.html'
     success_url = reverse_lazy('listar_cursos')
+    group_required = u'Professor'
 
     def form_valid(self, form):
-        # If you want to associate the curso to the logged user, uncomment:
-        # curso = form.save(commit=False)
-        # curso.usuario = self.request.user
-        # curso.save()
-        return super().form_valid(form)
+        
+        form.instance.usuario = self.request.user
+
+        url = super().form_valid(form)
+
+        return url
 
 
 class CursoListView(ListView):
@@ -170,28 +194,37 @@ class CursoListView(ListView):
         return context
 
 
-class CursoUpdateView(LoginRequiredMixin, UpdateView):
+class CursoUpdateView(ProfessorRequiredMixin, LoginRequiredMixin, UpdateView):
     model = Curso
     form_class = CursoForm
     template_name = 'gerencia/editar_curso.html'
     success_url = reverse_lazy('listar_cursos')
+    group_required = u'Professor'
 
+    def get_object(self, queryset=None):
+        self.object = get_object_or_404(Curso, pk=self.kwargs.get('pk'), usuario=self.request.user)
+        return self.object
 
-class CursoDeleteView(LoginRequiredMixin, DeleteView):
+class CursoDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Curso
     template_name = 'gerencia/deletar_curso.html'
     success_url = reverse_lazy('listar_cursos')
+    group_required = u'Professor'
 
+    def get_object(self, queryset=None):
+        self.object = get_object_or_404(Curso, pk=self.kwargs.get('pk'), usuario=self.request.user)
+        return self.object
 
 
 
 # CRUD Aulas (Class-Based Views)
 
 
-class AulaCreateView(LoginRequiredMixin, CreateView):
+class AulaCreateView(ProfessorRequiredMixin, LoginRequiredMixin, CreateView):
     model = Aula
     form_class = AulaForm
     template_name = 'aulas/criar_aula.html'
+    group_required = u'Professor'
 
     def dispatch(self, request, *args, **kwargs):
         self.curso = get_object_or_404(Curso, pk=kwargs.get('curso_id'))
@@ -258,12 +291,13 @@ def detalhe_aula(request, curso_id, aula_id):
     return render(request, 'aulas/detalhe_aula.html', {'curso': curso, 'aula': aula, 'video_embed': video_embed})
 
 
-class AulaUpdateView(LoginRequiredMixin, UpdateView):
+class AulaUpdateView(ProfessorRequiredMixin, LoginRequiredMixin, UpdateView):
     model = Aula
     form_class = AulaForm
     template_name = 'aulas/editar_aula.html'
     pk_url_kwarg = 'aula_id'
     context_object_name = 'aula'
+    group_required = u'Professor'
 
     def get_object(self, queryset=None):
         curso = get_object_or_404(Curso, pk=self.kwargs.get('curso_id'))
@@ -278,11 +312,12 @@ class AulaUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class AulaDeleteView(LoginRequiredMixin, DeleteView):
+class AulaDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
     model = Aula
     template_name = 'aulas/deletar_aula.html'
     pk_url_kwarg = 'aula_id'
     context_object_name = 'aula'
+    group_required = u'Professor'
 
     def get_object(self, queryset=None):
         curso = get_object_or_404(Curso, pk=self.kwargs.get('curso_id'))
@@ -295,3 +330,12 @@ class AulaDeleteView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['curso'] = get_object_or_404(Curso, pk=self.kwargs.get('curso_id'))
         return context
+
+
+class CursoCadastradosListView(ListView):
+    model = Curso
+    template_name = 'cursos_cadastrados.html'
+
+    def get_queryset(self):
+        self.obejct_list = Curso.objects.filter(usuario=self.request.user).order_by('-data_criacao')
+        return self.obejct_list
