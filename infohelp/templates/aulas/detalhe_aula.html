@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load auth_extras %}
+
 {% block title %}{{ aula.titulo }} - {{ curso.titulo }}{% endblock title %}
 
 {% block content %}
@@ -44,6 +46,7 @@
                         
                         <!-- Botões de Ação (Admin) -->
                         <div class="flex gap-2 flex-shrink-0">
+                            {% if request.user|has_group:"Professor" %}
                             <a href="{% url 'editar_aula' curso.pk aula.pk %}"
                                class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
                                title="Editar aula">
@@ -54,6 +57,7 @@
                                title="Deletar aula">
                                 <span class="material-symbols-outlined text-base">delete</span>
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

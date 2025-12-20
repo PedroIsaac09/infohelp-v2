@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load auth_extras %}
+
 {% block title %}Cursos - InfoHelp{% endblock title %}
 
 {% block content %}
@@ -80,7 +82,7 @@
                                 <!-- Botões visíveis só no hover -->
                                 <div class="mb-6 bottom-4 left-0 w-full flex justify-center gap-4
                                             hidden group-hover:flex transition-opacity duration-300">
-                                    {% if request.user.is_authenticated %}
+                                    {% if request.user == curso.usuario or request.user.is_superuser %}
                                     <a href="{% url 'editar_curso' curso.pk %}"
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold shadow">
                                         Editar
@@ -180,7 +182,7 @@
                         </div>
                         -->
                     <div>
-                        {% if request.user.is_authenticated %}
+                        {% if request.user|has_group:"Professor" %}
                         <a href="{% url 'criar_curso' %}"
                         class="inline-flex items-center gap-2 bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30
                                 text-primary font-semibold px-4 py-2 rounded-lg transition-all duration-200">

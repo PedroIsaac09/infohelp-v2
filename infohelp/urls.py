@@ -5,14 +5,6 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('inicio/', views.inicio, name="inicio"),
 
-    path('categorias/nova/', views.criar_categoria, name='criar_categoria'),
-    path('categorias/<int:pk>/editar/', views.editar_categoria, name='editar_categoria'),
-    path('categorias/<int:pk>/deletar/', views.deletar_categoria, name='deletar_categoria'),
-
-    path('dificuldades/nova/', views.criar_dificuldade, name='criar_dificuldade'),
-    path('dificuldades/<int:pk>/editar/', views.editar_dificuldade, name='editar_dificuldade'),
-    path('dificuldades/<int:pk>/deletar/', views.deletar_dificuldade, name='deletar_dificuldade'),
-
     path('cursos/novo/', views.CursoCreateView.as_view(), name='criar_curso'),
     path('cursos/', views.CursoListView.as_view(), name='listar_cursos'),
     path('cursos/cadastrados/', views.CursoCadastradosListView.as_view(), name='cursos_cadastrados'),

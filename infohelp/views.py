@@ -29,76 +29,11 @@ class ProfessorRequiredMixin(UserPassesTestMixin):
             'detail': 'Esta seção é exclusiva para professores. Se você acredita que isto é um erro, entre em contato com a administração.'
         }
         return render(self.request, 'acesso_nao_permitido.html', context, status=403)
+    
 
 
 
-
-
-
-def criar_categoria(request):
-    if request.method == 'POST':    
-        form = CategoriaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('criar_curso')
-    else:
-        form = CategoriaForm()
-    return render(request, 'criar_categoria.html', {'form': form})
-
-def editar_categoria(request, pk):
-    categoria = Categoria.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = CategoriaForm(request.POST, instance=categoria)
-        if form.is_valid():
-            form.save()
-            return redirect('listar_categorias')
-    else:
-        form = CategoriaForm(instance=categoria)
-    return render(request, 'editar_categoria.html', {'form': form})
-
-def deletar_categoria(request, pk):
-    categoria = Categoria.objects.get(pk=pk)
-    if request.method == 'POST':
-        categoria.delete()
-        return redirect('listar_categorias')
-    return render(request, 'deletar_categoria.html', {'categoria': categoria})
-
-
-
-
-
-def criar_dificuldade(request):
-    if request.method == 'POST':
-        form = DificuldadeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('criar_aula')  # ou a página que desejar
-    else:
-        form = DificuldadeForm()
-    return render(request, 'criar_dificuldade.html', {'form': form})
-
-def editar_dificuldade(request, pk):
-    dificuldade = get_object_or_404(Dificuldade, pk=pk)
-    if request.method == 'POST':
-        form = DificuldadeForm(request.POST, instance=dificuldade)
-        if form.is_valid():
-            form.save()
-            return redirect('listar_cursos')
-    else:
-        form = DificuldadeForm(instance=dificuldade)
-    return render(request, 'editar_dificuldade.html', {'form': form})
-
-def deletar_dificuldade(request, pk):
-    dificuldade = get_object_or_404(Dificuldade, pk=pk)
-    if request.method == 'POST':
-        dificuldade.delete()
-        return redirect('listar_cursos')
-    return render(request, 'deletar_dificuldade.html', {'dificuldade': dificuldade})
-
-
-
-
-
+    
 def index(request):
     return render(request, "index.html")
 
@@ -227,11 +162,18 @@ class AulaCreateView(ProfessorRequiredMixin, LoginRequiredMixin, CreateView):
     group_required = u'Professor'
 
     def dispatch(self, request, *args, **kwargs):
-        self.curso = get_object_or_404(Curso, pk=kwargs.get('curso_id'))
+        if request.user.is_superuser:
+            self.curso = get_object_or_404(Curso, pk=kwargs.get('curso_id'))
+        else:
+            self.curso = get_object_or_404(Curso, pk=kwargs.get('curso_id'), usuario=request.user)
+            
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         form.instance.curso = self.curso
+
+        form.instance.usuario = self.request.user
+
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -300,7 +242,13 @@ class AulaUpdateView(ProfessorRequiredMixin, LoginRequiredMixin, UpdateView):
     group_required = u'Professor'
 
     def get_object(self, queryset=None):
-        curso = get_object_or_404(Curso, pk=self.kwargs.get('curso_id'))
+        curso_id = self.kwargs.get('curso_id')
+        
+        if self.request.user.is_superuser:
+            curso = get_object_or_404(Curso, pk=curso_id)
+        else:
+            curso = get_object_or_404(Curso, pk=curso_id, usuario=self.request.user)
+
         return get_object_or_404(Aula, pk=self.kwargs.get('aula_id'), curso=curso)
 
     def get_success_url(self):
@@ -320,7 +268,13 @@ class AulaDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
     group_required = u'Professor'
 
     def get_object(self, queryset=None):
-        curso = get_object_or_404(Curso, pk=self.kwargs.get('curso_id'))
+        curso_id = self.kwargs.get('curso_id')
+        
+        if self.request.user.is_superuser:
+            curso = get_object_or_404(Curso, pk=curso_id)
+        else:
+            curso = get_object_or_404(Curso, pk=curso_id, usuario=self.request.user)
+
         return get_object_or_404(Aula, pk=self.kwargs.get('aula_id'), curso=curso)
 
     def get_success_url(self):
@@ -334,7 +288,7 @@ class AulaDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
 
 class CursoCadastradosListView(ListView):
     model = Curso
-    template_name = 'cursos_cadastrados.html'
+    template_name = 'cursos_cadastrados.html'    
 
     def get_queryset(self):
         self.obejct_list = Curso.objects.filter(usuario=self.request.user).order_by('-data_criacao')

@@ -1,5 +1,7 @@
 {% load static %}
 
+{% load auth_extras %}
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -79,17 +81,17 @@
                         </a>
 
                         {% if request.user.is_authenticated %}
-                        <a href="{% url 'cursos_cadastrados' %}"
-                            class="text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'cursos_cadastrados' %} text-primary border-b-2 border-primary pb-1 {% else %} text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary {% endif %}">
-                            Cursos cadastrados
-                        </a>
-                        {% endif %}
-
-                        {% if request.user.is_authenticated %}
                         <a href="{% url 'biblioteca' %}"
                             class="text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'biblioteca' %} text-primary border-b-2 border-primary pb-1 {% else %} text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary {% endif %}">
                             Biblioteca
                         </a>
+                        {% endif %}
+
+                        {% if request.user|has_group:"Professor" %}
+                            <a href="{% url 'cursos_cadastrados' %}"
+                            class="text-sm font-medium transition-colors ...">
+                                Cursos cadastrados
+                            </a>
                         {% endif %}
                     </nav>
                 </div>
