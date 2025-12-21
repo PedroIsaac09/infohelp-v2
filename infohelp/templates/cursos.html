@@ -13,10 +13,11 @@
 
         <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="max-w-7xl mx-auto">
-                <div class="mb-8 text-center">
-                    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tighter">Catálogo
-                        de Cursos</h1>
-                    <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                <div class="mb-8">
+                    <div class="text-center">
+                        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white tracking-tighter">Catálogo de Cursos</h1>
+                    </div>
+                    <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-center">
                         Explore nossa vasta gama de cursos de tecnologia, projetados para impulsionar sua carreira e
                         habilidades.
                     </p>
@@ -181,16 +182,7 @@
                             </nav>
                         </div>
                         -->
-                    <div>
-                        {% if request.user|has_group:"Professor" %}
-                        <a href="{% url 'criar_curso' %}"
-                        class="inline-flex items-center gap-2 bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30
-                                text-primary font-semibold px-4 py-2 rounded-lg transition-all duration-200">
-                            <span class="material-symbols-outlined">add</span>
-                            Criar novo curso
-                        </a>
-                        {% endif %}
-                    </div>
+
 
 
                 </section>
@@ -198,7 +190,14 @@
         </main>
     </div>
 
-
+    <!-- Botão Flutuante de Criar Curso -->
+    {% if request.user|has_group:"Professor" or request.user.is_superuser %}
+    <a href="{% url 'criar_curso' %}"
+       class="fixed bottom-6 right-6 flex items-center justify-center size-14 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-50"
+       title="Criar Novo Curso">
+        <span class="material-symbols-outlined text-2xl">add</span>
+    </a>
+    {% endif %}
 
 </body>
 {% endblock content %}
