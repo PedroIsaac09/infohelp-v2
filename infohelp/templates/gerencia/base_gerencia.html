@@ -57,89 +57,19 @@
 
 <body class="font-display bg-background-light dark:bg-background-dark">
     <div class="relative flex min-h-screen w-full group/design-root">
-        <!-- SideNavBar -->
-        <div class="flex-shrink-0 w-64 bg-white dark:bg-background-dark border-r border-gray-200 dark:border-gray-800">
-            <div class="flex flex-col h-full p-4">
-                <div class="flex items-center gap-3 mb-8">
-                    <div
-                        class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                        data-alt="Admin user avatar"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAOfC0h69kTxtrL54QxBhV3YnMhl2Z523JaPYevsGFvIpyE4YTUkaLeQICcwV5dWSiokUura7rrndchTMHEGul-g0KjSFoSxZ867NBNRbAV6-7WYxaFBUOIpMgU4sl80L_SxK9QTqBxRd-eHFuszbPQZx3R30BFp1uF8nd6F-OHV5lgjhHXcbNDGz4MB3poTT9rkH1O5GTPnTfllzuYlmtQWEiJp5HsxZF66PtXcJ38tbx0lilY3BZfYewKSOSW-RcXXs8Pkdbcg60");'
-                    ></div>
-
-                    <div class="flex flex-col">
-                        <h1 class="text-gray-900 dark:text-white text-base font-medium leading-normal">
-                            Admin
-                        </h1>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-                            admin@plataforma.com
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-2 grow">
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-primary/20"
-                    >
-                        <span class="material-symbols-outlined text-gray-800 dark:text-gray-300">dashboard</span>
-                        <p class="text-gray-800 dark:text-gray-300 text-sm font-medium">
-                            Painel
-                        </p>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20"
-                    >
-                        <span class="material-symbols-outlined text-primary font-bold">school</span>
-                        <p class="text-primary text-sm font-medium">
-                            Cursos
-                        </p>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-primary/20"
-                    >
-                        <span class="material-symbols-outlined text-gray-800 dark:text-gray-300">group</span>
-                        <p class="text-gray-800 dark:text-gray-300 text-sm font-medium">
-                            Alunos
-                        </p>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-primary/20"
-                    >
-                        <span class="material-symbols-outlined text-gray-800 dark:text-gray-300">bar_chart</span>
-                        <p class="text-gray-800 dark:text-gray-300 text-sm font-medium">
-                            Relatórios
-                        </p>
-                    </a>
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-primary/20"
-                    >
-                        <span class="material-symbols-outlined text-gray-800 dark:text-gray-300">settings</span>
-                        <p class="text-gray-800 dark:text-gray-300 text-sm font-medium">
-                            Configurações
-                        </p>
-                    </a>
-
-                    <a
-                        href="{% url 'listar_cursos' %}"
-                        class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-primary/20"
-                    >
-                        <span class="material-symbols-outlined text-gray-800 dark:text-gray-300">logout</span>
-                        <p class="text-gray-800 dark:text-gray-300 text-sm font-medium">
-                            Sair
-                        </p>
-                    </a>
-                </div>
+        <!-- SideNavBar - Apenas botão Sair -->
+        <div class="flex-shrink-0 w-20 bg-white dark:bg-background-dark border-r border-gray-200 dark:border-gray-800">
+            <div class="flex flex-col h-full p-4 justify-end">
+                <a
+                    href="{% url 'listar_cursos' %}"
+                    class="flex flex-col items-center gap-2 px-3 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-primary/20 transition"
+                    title="Sair"
+                >
+                    <span class="material-symbols-outlined text-gray-800 dark:text-gray-300">logout</span>
+                    <p class="text-gray-800 dark:text-gray-300 text-xs font-medium">
+                        Sair
+                    </p>
+                </a>
             </div>
         </div>
 

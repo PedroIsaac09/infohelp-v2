@@ -40,15 +40,84 @@ def index(request):
 
 @login_required
 def inicio(request):
-    return render(request, "inicio.html")
+    from usuarios.models import SolicitacaoProfessor
+    
+    # Verificar se há notificação de aprovação/rejeição não vista
+    notificacao = None
+    solicitacao_respondida = SolicitacaoProfessor.objects.filter(
+        usuario=request.user,
+        notificacao_vista=False
+    ).exclude(status='pendente').first()
+    
+    if solicitacao_respondida:
+        notificacao = solicitacao_respondida
+    
+    # Buscar cursos em destaque (últimos 6 cursos)
+    cursos_destaque = Curso.objects.all().order_by('-id')[:6]
+    
+    return render(request, "inicio.html", {
+        'notificacao': notificacao,
+        'cursos_destaque': cursos_destaque
+    })
 
 
 def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")
 
 
+@login_required
 def perfil(request):
-    return render(request, "perfil.html")
+    from usuarios.forms import UserProfileForm, UserPasswordChangeForm, PerfilFotoForm
+    from usuarios.models import PerfilUsuario
+    from django.contrib import messages
+    
+    # Garanta que o perfil existe
+    perfil_usuario, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
+    
+    profile_form = None
+    password_form = None
+    foto_form = None
+    tab = request.GET.get('tab', 'perfil')
+    
+    if request.method == 'POST':
+        if 'profile_submit' in request.POST:
+            # Processa formulário de perfil (nome, email, telefone, localizacao) E foto se enviada
+            profile_form = UserProfileForm(request.POST, instance=perfil_usuario)
+            foto_form = PerfilFotoForm(request.POST, request.FILES, instance=perfil_usuario)
+            
+            if profile_form.is_valid() and foto_form.is_valid():
+                profile_form.save()
+                foto_form.save()
+                messages.success(request, 'Perfil e foto atualizados com sucesso!')
+                return redirect('perfil')
+            else:
+                password_form = UserPasswordChangeForm(request.user)
+        elif 'password_submit' in request.POST:
+            password_form = UserPasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                # Atualiza a sessão para evitar logout
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Senha alterada com sucesso!')
+                tab = 'seguranca'
+            else:
+                tab = 'seguranca'
+            profile_form = UserProfileForm(instance=perfil_usuario)
+            foto_form = PerfilFotoForm(instance=perfil_usuario)
+    else:
+        profile_form = UserProfileForm(instance=perfil_usuario)
+        password_form = UserPasswordChangeForm(request.user)
+        foto_form = PerfilFotoForm(instance=perfil_usuario)
+    
+    context = {
+        'profile_form': profile_form,
+        'password_form': password_form,
+        'foto_form': foto_form,
+        'perfil_usuario': perfil_usuario,
+        'tab': tab,
+    }
+    return render(request, "perfil.html", context)
 
 
 
@@ -137,7 +206,11 @@ class CursoUpdateView(ProfessorRequiredMixin, LoginRequiredMixin, UpdateView):
     group_required = u'Professor'
 
     def get_object(self, queryset=None):
-        self.object = get_object_or_404(Curso, pk=self.kwargs.get('pk'), usuario=self.request.user)
+        pk = self.kwargs.get('pk')
+        if self.request.user.is_superuser:
+            self.object = get_object_or_404(Curso, pk=pk)
+        else:
+            self.object = get_object_or_404(Curso, pk=pk, usuario=self.request.user)
         return self.object
 
 class CursoDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
@@ -147,7 +220,11 @@ class CursoDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
     group_required = u'Professor'
 
     def get_object(self, queryset=None):
-        self.object = get_object_or_404(Curso, pk=self.kwargs.get('pk'), usuario=self.request.user)
+        pk = self.kwargs.get('pk')
+        if self.request.user.is_superuser:
+            self.object = get_object_or_404(Curso, pk=pk)
+        else:
+            self.object = get_object_or_404(Curso, pk=pk, usuario=self.request.user)
         return self.object
 
 
@@ -286,10 +363,11 @@ class AulaDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
         return context
 
 
-class CursoCadastradosListView(ListView):
+class CursoCadastradosListView(ProfessorRequiredMixin, LoginRequiredMixin, ListView):
     model = Curso
-    template_name = 'cursos_cadastrados.html'    
+    template_name = 'cursos_cadastrados.html'
+    context_object_name = 'object_list'
+    group_required = u'Professor'
 
     def get_queryset(self):
-        self.obejct_list = Curso.objects.filter(usuario=self.request.user).order_by('-data_criacao')
-        return self.obejct_list
+        return Curso.objects.filter(usuario=self.request.user).order_by('-data_criacao')

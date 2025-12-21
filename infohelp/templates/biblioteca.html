@@ -19,32 +19,14 @@
                     </p>
                 </div>
             </div>
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ activeTab: 'inProgress' }">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="max-w-7xl mx-auto">
-                    <div class="border-b border-slate-200 dark:border-slate-800 mb-8">
-                        <nav aria-label="Tabs" class="-mb-px flex justify-center space-x-4 sm:space-x-8">
-                            <button
-                                :class="{ 'border-primary text-primary': activeTab === 'inProgress', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-300 dark:hover:border-slate-700': activeTab !== 'inProgress' }"
-                                @click="activeTab = 'inProgress'"
-                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ease-in-out flex items-center gap-2">
-                                <span class="material-symbols-outlined text-lg">hourglass_top</span>
-                                Cursos em Progresso
-                            </button>
-                            <button
-                                :class="{ 'border-primary text-primary': activeTab === 'saved', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-300 dark:hover:border-slate-700': activeTab !== 'saved' }"
-                                @click="activeTab = 'saved'"
-                                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ease-in-out flex items-center gap-2">
-                                <span class="material-symbols-outlined text-lg">bookmark_border</span>
-                                Cursos Salvos
-                            </button>
-                        </nav>
+                    {% if items %}
+                    <div class="mb-6">
+                        <p class="text-center text-sm text-slate-600 dark:text-slate-400">Cursos salvos na sua biblioteca</p>
                     </div>
-                    <div x-cloak="" x-show="activeTab === 'inProgress'">
-                        <div class="mb-6">
-                            <p class="text-center text-sm text-slate-600 dark:text-slate-400">Aqui aparecem cursos em progresso — recurso de progresso ainda não implementado. Use a aba "Cursos Salvos" para acessar os cursos que você salvou.</p>
-                        </div>
-                    </div>
-                    <div x-cloak="" x-show="activeTab === 'saved'">
+                    {% endif %}
+                    <div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {% if items %}
                                 {% for item in items %}
@@ -69,13 +51,13 @@
                                                 <a href="{% url 'listar_aulas' curso.pk %}" class="block hover:underline">{{ curso.titulo }}</a>
                                             </h3>
                                             <p class="text-sm text-slate-500 dark:text-slate-400 h-10">{{ curso.descricao|slice:":120" }}</p>
-                                            <div class="mt-4 flex items-center justify-between">
+                                            <div class="mt-4 flex items-center justify-between gap-2">
                                                 <form method="post" action="{% url 'remover_biblioteca' curso.pk %}">
                                                     {% csrf_token %}
                                                     <input type="hidden" name="next" value="{% url 'biblioteca' %}">
-                                                    <button type="submit" class="text-sm text-red-600 hover:underline">Remover</button>
+                                                    <button type="submit" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg font-semibold transition-colors">Remover</button>
                                                 </form>
-                                                <a href="{% url 'listar_aulas' curso.pk %}" class="inline-flex items-center gap-2 bg-primary text-white px-3 py-2 rounded-lg font-semibold">Iniciar</a>
+                                                <a href="{% url 'listar_aulas' curso.pk %}" class="inline-flex items-center gap-2 bg-primary text-white px-3 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-colors">Iniciar</a>
                                             </div>
                                         </div>
                                     </div>

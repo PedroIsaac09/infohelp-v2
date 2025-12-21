@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitar Ser Professor - InfoHelp{% endblock title %}
+
+{% block content %}
+    <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div class="mb-8">
+            <a href="{% url 'perfil' %}" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span class="text-sm font-medium">Voltar ao perfil</span>
+            </a>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900/50 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="flex items-center justify-center size-12 rounded-full bg-primary/10 dark:bg-primary/20">
+                    <span class="material-symbols-outlined text-primary text-2xl">school</span>
+                </div>
+                <div>
+                    <h1 class="text-slate-900 dark:text-slate-50 text-2xl font-bold">Solicitar Ser Professor</h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Preencha o formulário abaixo para enviar sua solicitação</p>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700{% elif message.tags == 'error' %}bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700{% else %}bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 border border-yellow-300 dark:border-yellow-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                    <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">info</span>
+                        <div>
+                            <h3 class="text-blue-900 dark:text-blue-100 font-semibold mb-1">Informações Importantes</h3>
+                            <ul class="text-blue-800 dark:text-blue-200 text-sm space-y-1 list-disc list-inside">
+                                <li>Sua solicitação será analisada por um administrador</li>
+                                <li>Você receberá uma resposta em breve</li>
+                                <li>Como professor, você poderá criar e gerenciar cursos e aulas</li>
+                                <li>O envio do currículo é obrigatório para análise</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="mensagem" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Por que você deseja se tornar professor? <span class="text-red-500">*</span>
+                    </label>
+                    <textarea 
+                        name="mensagem" 
+                        id="mensagem" 
+                        rows="6"
+                        required
+                        placeholder="Descreva sua experiência, conhecimentos e motivação para ser professor no InfoHelp..."
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 resize-none"
+                    ></textarea>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                        Seja claro e objetivo. Mínimo de 50 caracteres.
+                    </p>
+                </div>
+
+                <div>
+                    <label for="curriculo" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Currículo <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="file" 
+                            name="curriculo" 
+                            id="curriculo"
+                            accept=".pdf,.doc,.docx"
+                            required
+                            class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer"
+                        />
+                    </div>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                        Formatos aceitos: PDF, DOC, DOCX. Tamanho máximo: 5MB
+                    </p>
+                </div>
+
+                <div>
+                    <label for="links" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Links Relevantes <span class="text-slate-500 text-xs">(Opcional)</span>
+                    </label>
+                    <textarea 
+                        name="links" 
+                        id="links" 
+                        rows="3"
+                        placeholder="LinkedIn: https://linkedin.com/in/seu-perfil&#10;GitHub: https://github.com/seu-usuario&#10;Portfólio: https://seu-site.com"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 resize-none"
+                    ></textarea>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                        Adicione links para LinkedIn, GitHub, portfólio, etc. (um por linha)
+                    </p>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <a href="{% url 'perfil' %}" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-bold px-6 transition">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white hover:bg-primary/90 text-sm font-bold px-6 transition">
+                        <span class="material-symbols-outlined text-base mr-2">send</span>
+                        Enviar Solicitação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock content %}

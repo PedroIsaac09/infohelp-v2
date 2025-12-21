@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ acao|title }} Solicitação - InfoHelp{% endblock title %}
+
+{% block content %}
+    <main class="flex-1 w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <div class="mb-8">
+            <a href="{% url 'listar_solicitacoes' %}" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span class="text-sm font-medium">Voltar às solicitações</span>
+            </a>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900/50 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="flex items-center justify-center size-12 rounded-full {% if acao == 'aprovar' %}bg-green-100 dark:bg-green-900/20{% else %}bg-red-100 dark:bg-red-900/20{% endif %}">
+                    <span class="material-symbols-outlined {% if acao == 'aprovar' %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %} text-2xl">
+                        {% if acao == 'aprovar' %}check_circle{% else %}cancel{% endif %}
+                    </span>
+                </div>
+                <div>
+                    <h1 class="text-slate-900 dark:text-slate-50 text-2xl font-bold">{{ acao|title }} Solicitação</h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Solicitação de {{ solicitacao.usuario.username }}</p>
+                </div>
+            </div>
+
+            <!-- Informações do Solicitante -->
+            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 mb-6">
+                <h2 class="text-slate-900 dark:text-slate-100 font-semibold mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-xl">person</span>
+                    Informações do Solicitante
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div>
+                        <span class="text-slate-500 dark:text-slate-400">Nome de usuário:</span>
+                        <span class="text-slate-900 dark:text-slate-100 font-medium ml-2">{{ solicitacao.usuario.username }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 dark:text-slate-400">Email:</span>
+                        <span class="text-slate-900 dark:text-slate-100 font-medium ml-2">{{ solicitacao.usuario.email }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 dark:text-slate-400">Data da solicitação:</span>
+                        <span class="text-slate-900 dark:text-slate-100 font-medium ml-2">{{ solicitacao.data_solicitacao|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagem do Solicitante -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Mensagem do solicitante:
+                </label>
+                <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                    <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ solicitacao.mensagem }}</p>
+                </div>
+            </div>
+
+            <!-- Currículo -->
+            {% if solicitacao.curriculo %}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Currículo anexado:
+                    </label>
+                    <a href="{{ solicitacao.curriculo.url }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition">
+                        <span class="material-symbols-outlined text-primary">description</span>
+                        <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Baixar Currículo</span>
+                        <span class="material-symbols-outlined text-slate-500 text-sm">download</span>
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Links -->
+            {% if solicitacao.links %}
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Links relevantes:
+                    </label>
+                    <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                        <div class="space-y-2">
+                            {% for link in solicitacao.links.splitlines %}
+                                {% if link.strip %}
+                                    <a href="{% if 'http' in link %}{{ link }}{% else %}https://{{ link }}{% endif %}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-primary hover:text-primary/80 text-sm">
+                                        <span class="material-symbols-outlined text-base">link</span>
+                                        {{ link }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Formulário de Resposta -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-6">
+                    <label for="mensagem_admin" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        Mensagem de resposta (opcional):
+                    </label>
+                    <textarea 
+                        name="mensagem_admin" 
+                        id="mensagem_admin" 
+                        rows="4"
+                        placeholder="{% if acao == 'aprovar' %}Parabéns! Você foi aprovado como professor...{% else %}Obrigado pelo interesse, mas...{% endif %}"
+                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 resize-none"
+                    ></textarea>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">
+                        Esta mensagem será visível para o usuário (futuramente implementado)
+                    </p>
+                </div>
+
+                {% if acao == 'aprovar' %}
+                    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-6">
+                        <div class="flex gap-3">
+                            <span class="material-symbols-outlined text-green-600 dark:text-green-400">info</span>
+                            <div>
+                                <h3 class="text-green-900 dark:text-green-100 font-semibold mb-1">Ao aprovar:</h3>
+                                <ul class="text-green-800 dark:text-green-200 text-sm space-y-1 list-disc list-inside">
+                                    <li>O usuário será adicionado ao grupo "Professor"</li>
+                                    <li>Ele poderá criar e gerenciar cursos e aulas</li>
+                                    <li>A solicitação será marcada como aprovada</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4 mb-6">
+                        <div class="flex gap-3">
+                            <span class="material-symbols-outlined text-red-600 dark:text-red-400">warning</span>
+                            <div>
+                                <h3 class="text-red-900 dark:text-red-100 font-semibold mb-1">Ao rejeitar:</h3>
+                                <ul class="text-red-800 dark:text-red-200 text-sm space-y-1 list-disc list-inside">
+                                    <li>A solicitação será marcada como rejeitada</li>
+                                    <li>O usuário poderá enviar uma nova solicitação no futuro</li>
+                                    <li>Considere enviar uma mensagem explicando o motivo</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <a href="{% url 'listar_solicitacoes' %}" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-bold px-6 transition">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="flex cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 {% if acao == 'aprovar' %}bg-green-600 hover:bg-green-700{% else %}bg-red-600 hover:bg-red-700{% endif %} text-white text-sm font-bold px-6 transition">
+                        <span class="material-symbols-outlined text-base mr-2">
+                            {% if acao == 'aprovar' %}check_circle{% else %}cancel{% endif %}
+                        </span>
+                        Confirmar {{ acao|title }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+{% endblock content %}

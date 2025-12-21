@@ -93,62 +93,59 @@
                     {% endif %}
                 {% endif %}
                 
-                <!-- Hero Section -->
-                <div class="mb-12 relative flex min-h-[400px] flex-col gap-6 rounded-xl bg-cover bg-center bg-no-repeat items-center justify-center p-8 text-center"
-                    style='background-image: linear-gradient(rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDEFC8sVM0vXbngItjbTto0T3GtsRBAg9oh_K7LE8Mw3K0-rpdTp0PTX0JKrLseQROqdZm0odJni3pUVQ2JPIQGC2f3uPWvZNwbvru8f6dzastTZqImcODNvVYbde7dA56drHmDJdAOMyypKVyo9GpxkkqpqkBeR-qprpajw3x1wCJfCjP8g0S0NAh6__1mRtRmO3HgnV7a9Q-JqBMjYUsbZGdq_cUcbN5C0ygXZ-183_Yk7lx2C0x-H1tw6cC9CERCdOdjorJiNqk");'>
-                    <div class="flex flex-col gap-4 max-w-2xl">
-                        <h1 class="text-white text-4xl md:text-5xl font-extrabold tracking-tight">
-                            Desbloqueie Seu Potencial Tecnológico
-                        </h1>
-                        <p class="text-white/90 text-base md:text-lg">
-                            Explore cursos de programação, desenvolvimento web, ciência de dados e muito mais
-                        </p>
-                    </div>
+                <!-- Hero Section Simplificado -->
+                <div class="mb-12 text-center">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-content-light dark:text-content-dark mb-4 tracking-tight">
+                        Desbloqueie Seu Potencial Tecnologico
+                    </h1>
+                    <p class="text-lg text-subtle-light dark:text-subtle-dark max-w-2xl mx-auto">
+                        Explore cursos de programação, desenvolvimento web, ciência de dados e muito mais
+                    </p>
                 </div>
 
                 <!-- Featured Courses -->
-                <section class="mb-12">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-content-light dark:text-content-dark">
+                <section class="mb-16">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-content-light dark:text-content-dark">
                             Cursos em Destaque
                         </h2>
-                        <a href="{% url 'listar_cursos' %}" 
-                           class="text-primary hover:text-primary/80 text-sm font-medium flex items-center gap-1 transition-colors">
+                        <a href="{% url 'cursos' %}" 
+                           class="text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors">
                             Ver todos
-                            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                            <span class="material-symbols-outlined text-xl">arrow_forward</span>
                         </a>
                     </div>
 
                     {% if cursos_destaque %}
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {% for curso in cursos_destaque %}
                         <a href="{% url 'listar_aulas' curso.id %}" 
-                           class="group flex flex-col bg-surface-light dark:bg-surface-dark rounded-lg overflow-hidden shadow-sm border border-primary/10 dark:border-primary/20 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/40 transition-all duration-200">
+                           class="group flex flex-col bg-surface-light dark:bg-surface-dark rounded-lg overflow-hidden shadow-sm border border-primary/10 dark:border-primary/20 hover:shadow-lg hover:border-primary/30 dark:hover:border-primary/40 transition-all duration-200">
                             {% if curso.imagem %}
                             <div class="w-full aspect-video bg-cover bg-center" 
                                  style="background-image: url('{{ curso.imagem.url }}');"></div>
                             {% else %}
                             <div class="w-full aspect-video bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-4xl text-primary/40">school</span>
+                                <span class="material-symbols-outlined text-6xl text-primary/40">school</span>
                             </div>
                             {% endif %}
                             
-                            <div class="p-3 flex flex-col flex-grow">
-                                <h3 class="text-sm font-bold text-content-light dark:text-content-dark mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                            <div class="p-5 flex flex-col flex-grow">
+                                <h3 class="text-lg font-bold text-content-light dark:text-content-dark mb-2 group-hover:text-primary transition-colors">
                                     {{ curso.nome }}
                                 </h3>
-                                <p class="text-xs text-subtle-light dark:text-subtle-dark mb-3 flex-grow line-clamp-2">
+                                <p class="text-sm text-subtle-light dark:text-subtle-dark mb-4 flex-grow line-clamp-2">
                                     {{ curso.descricao|default:"Descrição não disponível" }}
                                 </p>
                                 
-                                <div class="flex items-center justify-between text-xs text-subtle-light dark:text-subtle-dark gap-2">
+                                <div class="flex items-center justify-between text-xs text-subtle-light dark:text-subtle-dark">
                                     {% if curso.categoria %}
-                                    <span class="px-2 py-0.5 bg-primary/10 text-primary rounded-full font-medium text-xs truncate">
+                                    <span class="px-2 py-1 bg-primary/10 text-primary rounded-full font-medium">
                                         {{ curso.categoria.nome }}
                                     </span>
                                     {% endif %}
                                     {% if curso.dificuldade %}
-                                    <span class="text-xs truncate">{{ curso.dificuldade.nome }}</span>
+                                    <span>{{ curso.dificuldade.nome }}</span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -156,9 +153,9 @@
                         {% endfor %}
                     </div>
                     {% else %}
-                    <div class="text-center py-12 bg-surface-light dark:bg-surface-dark rounded-lg border border-primary/10">
-                        <span class="material-symbols-outlined text-5xl text-subtle-light dark:text-subtle-dark mb-3 block">school</span>
-                        <p class="text-sm text-subtle-light dark:text-subtle-dark">
+                    <div class="text-center py-16 bg-surface-light dark:bg-surface-dark rounded-lg border border-primary/10">
+                        <span class="material-symbols-outlined text-6xl text-subtle-light dark:text-subtle-dark mb-4 block">school</span>
+                        <p class="text-subtle-light dark:text-subtle-dark">
                             Nenhum curso disponível no momento.
                         </p>
                     </div>
@@ -170,36 +167,42 @@
                     <h2 class="text-2xl font-bold text-content-light dark:text-content-dark text-center mb-8">
                         Categorias Populares
                     </h2>
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-5xl mx-auto">
-                        <div class="group flex flex-col items-center gap-3 text-center cursor-pointer animate-fade-up" style="animation-delay: 0.1s;">
-                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 group-hover:rotate-2"
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                        <div class="group flex flex-col items-center gap-3 text-center">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-105 transition-transform"
                                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDz72T-F0q7VmQCbSJBp5bGEQGxjZ1crlzOlEaDSX5trOJIXDKerx9zSGqXivhpoDeYfUfqGHoXNZJf8udn2inekFsUeM9hHg6I8y6d0QKvgTBTM8SdrHb_MtsuZp3o60NDtv5ab89fXZ9vG5r-GfD8eHDHS5REGCeZxkqly5ZwpFTxOetzsg5G9skTKGTxiJ7LmNN7Efk4bkOX8bkJTRk6zsr32aBwV94MlCQGGym7fUue00a2zdbbCHd5qDKpXQah3p21h1vo7BE");'>
                             </div>
-                            <p class="text-base font-medium text-content-light dark:text-content-dark group-hover:text-primary transition-colors">Programação</p>
+                            <p class="text-base font-medium text-content-light dark:text-content-dark">Programação</p>
                         </div>
-                        <div class="group flex flex-col items-center gap-3 text-center cursor-pointer animate-fade-up" style="animation-delay: 0.2s;">
-                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 group-hover:rotate-2"
+                        <div class="group flex flex-col items-center gap-3 text-center">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-105 transition-transform"
                                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCOY833sYOtIGo340cIGbfqXSLJkDZXRBSHcDEnQUZlK62QHF7ZdD0VTDyPUveyr3Ch7TNod2F3OZI9jpyxZi3dH18yaeNvXm19Eejc_gcnN2PzxYW4R6ga4-h4vihVwJtMIyiLcKXBpUlcRJBlX-GvADVb5nVeUz8nC5sZHGWf7n6i4BEpm7RCQwLE5rDX5CMjAeijBcS6wtQC6G9ULuueIXqlQIFq3dcrboFA1xVG2xHrQppLS4UnqoJA1mAtYnRsApbe69yOqps");'>
                             </div>
-                            <p class="text-base font-medium text-content-light dark:text-content-dark group-hover:text-primary transition-colors">Ciência de Dados</p>
+                            <p class="text-base font-medium text-content-light dark:text-content-dark">Data Science</p>
                         </div>
-                        <div class="group flex flex-col items-center gap-3 text-center cursor-pointer animate-fade-up" style="animation-delay: 0.3s;">
-                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 group-hover:rotate-2"
-                                style='background-image: url("https://images.unsplash.com/photo-1547658719-da2b51169166?w=400&h=400&fit=crop");'>
-                            </div>
-                            <p class="text-base font-medium text-content-light dark:text-content-dark group-hover:text-primary transition-colors">Desenvolvimento Web</p>
-                        </div>
-                        <div class="group flex flex-col items-center gap-3 text-center cursor-pointer animate-fade-up" style="animation-delay: 0.4s;">
-                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 group-hover:rotate-2"
+                        <div class="group flex flex-col items-center gap-3 text-center">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-105 transition-transform"
                                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBikI3oXpj4ZE7y6dyW-LrKD7xcJZFPZxXLga1MCvlJ6zfa5PWZDpasaEb26YdVpNq5PfT1w-q-0ljE91dvjtR7tj8Uyqi_cpb7C1QtH0rFLBqLIYjowHRuZiv16jzA0P6lAXuGVbtpIHaqpLmSEK41rmP3C77IKIAYprrAFcMKUN2wGMC4Aw75MFYeUh0N2XRlRUtpY-p5SkEMdZKaVEyy3_EhcTC5lnQ_TyAQRg-NqXevpTGBsKCCRgd-mtFugRr2Vnl95lHLTzk");'>
                             </div>
-                            <p class="text-base font-medium text-content-light dark:text-content-dark group-hover:text-primary transition-colors">Design Web</p>
+                            <p class="text-base font-medium text-content-light dark:text-content-dark">Web Development</p>
                         </div>
-                        <div class="group flex flex-col items-center gap-3 text-center cursor-pointer animate-fade-up" style="animation-delay: 0.5s;">
-                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 group-hover:rotate-2"
-                                style='background-image: url("https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400&h=400&fit=crop");'>
+                        <div class="group flex flex-col items-center gap-3 text-center">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-105 transition-transform"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6xvSQqRMG5Q5ergx-fbJCIDmWPYWLPINy1s1QPel81YdqLskj2wwBq3uaH1-iBkZpMOTA52AsSCG2ZFWwpSFXK9klu6XWNjCuoCaF9LAa7mnrmt-4laG50UK9b0v1T-odNjmSkmy2xQnt38HGHgp_pHkFuiiMyxsVuA1GGO2wNvIvkRs_A5_BrZ8JQSDru4PyLOyXKNrK4p6lGjPX_QTDmKltoi8eRBv9WlfKKvWrLMjfDK65tYc9TUAnjEX5tlppsUrGOF6LSJ0");'>
                             </div>
-                            <p class="text-base font-medium text-content-light dark:text-content-dark group-hover:text-primary transition-colors">Escritório e Ferramentas Digitais</p>
+                            <p class="text-base font-medium text-content-light dark:text-content-dark">Mobile Development</p>
+                        </div>
+                        <div class="group flex flex-col items-center gap-3 text-center">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-105 transition-transform"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQo1nGaP5BvpLY4-llTk3T1EuOYYeHUvej5mPWJ-O_3hZ42Ga7MeChdjNItB_HOGBmc_ZU4POHgn9jagpBWpIgrq9a4YQjCQuUpyg-NLFhGTAdPAFQGj9KLHG419j7LB1yVGS9YE6LfY4FVDeWjG6d0i7nao8JBUKaOhOvEKSMng4E2Y0gB11XlxvlF5lylYwkKOun8B5gKduapzoh0N1lAXFuMDgn-YJ10UWIOrZDJDi6_ELVXqfpsCShOCeFkJHzKgREQp_TYE4");'>
+                            </div>
+                            <p class="text-base font-medium text-content-light dark:text-content-dark">Cloud Computing</p>
+                        </div>
+                        <div class="group flex flex-col items-center gap-3 text-center">
+                            <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg group-hover:scale-105 transition-transform"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDAEYhTHKsYxr_MsSAvl3zzWo1IYLdobqeO0fC7plGm-sNKaAJ_OLmiajmtm22R-uC-1-J0Jxj0MoTRSjfCfpYxH3twLZnCGGRiR-wG6Qfd-ez0yZN9_sGTd0E6vx8_2BZMA_7wMZOCBGM92cv3uPdwKWFlKq23hdpHhLuTtFSPd2qwTeJc-HPWGiNfMEkn87fsTat1gMNGQDv5WKwwOA0bfXuGuPQWC9Q1txEwxcbquiD5Ui9MT8VxMbTbFMVQb7_X5HJSupYWONg");'>
+                            </div>
+                            <p class="text-base font-medium text-content-light dark:text-content-dark">Cybersecurity</p>
                         </div>
                     </div>
                 </section>
@@ -210,17 +213,14 @@
 
     <!-- Script para Welcome Toast -->
     <script>
-        // Verificar se já foi mostrado nesta sessão
-        if (!sessionStorage.getItem('welcomeShown')) {
+        // Verificar se é a primeira visita nesta sessão
+        if (!sessionStorage.getItem('welcomeSeen')) {
             const toast = document.getElementById('welcomeToast');
             
             // Mostrar o toast após pequeno delay
             setTimeout(() => {
                 toast.classList.remove('hidden');
             }, 500);
-            
-            // Marcar como já mostrado
-            sessionStorage.setItem('welcomeShown', 'true');
             
             // Auto-fechar após 10 segundos
             setTimeout(() => {
@@ -231,6 +231,7 @@
         function closeWelcome() {
             const toast = document.getElementById('welcomeToast');
             toast.classList.add('hidden');
+            sessionStorage.setItem('welcomeSeen', 'true');
         }
     </script>
 
@@ -271,22 +272,6 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-        }
-        
-        @keyframes fade-up {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate-fade-up {
-            animation: fade-up 0.6s ease-out forwards;
-            opacity: 0;
         }
     </style>
 </body>
