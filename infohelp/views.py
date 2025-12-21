@@ -52,7 +52,13 @@ def inicio(request):
     if solicitacao_respondida:
         notificacao = solicitacao_respondida
     
-    return render(request, "inicio.html", {'notificacao': notificacao})
+    # Buscar cursos em destaque (últimos 6 cursos)
+    cursos_destaque = Curso.objects.all().order_by('-id')[:6]
+    
+    return render(request, "inicio.html", {
+        'notificacao': notificacao,
+        'cursos_destaque': cursos_destaque
+    })
 
 
 def testegerencia(request):
@@ -200,7 +206,11 @@ class CursoUpdateView(ProfessorRequiredMixin, LoginRequiredMixin, UpdateView):
     group_required = u'Professor'
 
     def get_object(self, queryset=None):
-        self.object = get_object_or_404(Curso, pk=self.kwargs.get('pk'), usuario=self.request.user)
+        pk = self.kwargs.get('pk')
+        if self.request.user.is_superuser:
+            self.object = get_object_or_404(Curso, pk=pk)
+        else:
+            self.object = get_object_or_404(Curso, pk=pk, usuario=self.request.user)
         return self.object
 
 class CursoDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
@@ -210,7 +220,11 @@ class CursoDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
     group_required = u'Professor'
 
     def get_object(self, queryset=None):
-        self.object = get_object_or_404(Curso, pk=self.kwargs.get('pk'), usuario=self.request.user)
+        pk = self.kwargs.get('pk')
+        if self.request.user.is_superuser:
+            self.object = get_object_or_404(Curso, pk=pk)
+        else:
+            self.object = get_object_or_404(Curso, pk=pk, usuario=self.request.user)
         return self.object
 
 
