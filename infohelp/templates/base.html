@@ -87,10 +87,24 @@
                         </a>
                         {% endif %}
 
-                        {% if request.user|has_group:"Professor" %}
+                        {% if request.user|has_group:"Professor" or request.user.is_superuser %}
                             <a href="{% url 'cursos_cadastrados' %}"
-                            class="text-sm font-medium transition-colors ...">
-                                Cursos cadastrados
+                            class="text-sm font-medium transition-colors {% if request.resolver_match.url_name == 'cursos_cadastrados' %} text-primary border-b-2 border-primary pb-1 {% else %} text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary {% endif %}">
+                                Meus Cursos
+                            </a>
+                        {% endif %}
+
+                        {% if request.user.is_superuser %}
+                            <a href="{% url 'listar_solicitacoes' %}"
+                            class="text-sm font-medium transition-colors relative {% if request.resolver_match.url_name == 'listar_solicitacoes' %} text-primary border-b-2 border-primary pb-1 {% else %} text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary {% endif %}">
+                                <div class="relative">
+                                    Solicitações
+                                    {% if solicitacoes_pendentes_count > 0 %}
+                                        <span class="absolute -top-2 -right-4 flex items-center justify-center size-5 rounded-full bg-red-500 text-white text-xs font-bold">
+                                            {{ solicitacoes_pendentes_count }}
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </a>
                         {% endif %}
                     </nav>

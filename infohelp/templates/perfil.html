@@ -6,11 +6,29 @@
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div class="flex flex-wrap justify-between gap-3 mb-8">
             <div class="flex min-w-72 flex-col gap-2">
-              <p
-                class="text-slate-900 dark:text-slate-50 text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]"
-              >
-                Configurações do Perfil
-              </p>
+              <div class="flex items-center gap-3">
+                <p
+                  class="text-slate-900 dark:text-slate-50 text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]"
+                >
+                  Configurações do Perfil
+                </p>
+                {% if user.is_superuser %}
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-xs font-medium">
+                    <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">shield</span>
+                    Administrador
+                  </span>
+                {% elif user.groups.all|length > 0 %}
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium">
+                    <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">school</span>
+                    Professor
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium">
+                    <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">person</span>
+                    Aluno
+                  </span>
+                {% endif %}
+              </div>
               <p
                 class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal"
               >
@@ -60,20 +78,20 @@
                   </p>
                 </a>
 
-                <a
-                  class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                  href="#"
-                >
-                  <span
-                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 text-2xl"
-                    >notifications</span
+                {% if not user.is_superuser and not user.groups.all|length %}
+                  <a
+                    class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 transition"
+                    href="{% url 'solicitar_professor' %}"
                   >
-                  <p
-                    class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal"
-                  >
-                    Notificações
-                  </p>
-                </a>
+                    <span
+                      class="material-symbols-outlined text-white text-2xl"
+                      >school</span
+                    >
+                    <p class="text-white text-sm font-medium leading-normal">
+                      Ser Professor
+                    </p>
+                  </a>
+                {% endif %}
 
                 <form method="post" action="{% url 'logout' %}" class="m-0">
                   {% csrf_token %}

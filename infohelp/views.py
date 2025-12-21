@@ -40,7 +40,19 @@ def index(request):
 
 @login_required
 def inicio(request):
-    return render(request, "inicio.html")
+    from usuarios.models import SolicitacaoProfessor
+    
+    # Verificar se há notificação de aprovação/rejeição não vista
+    notificacao = None
+    solicitacao_respondida = SolicitacaoProfessor.objects.filter(
+        usuario=request.user,
+        notificacao_vista=False
+    ).exclude(status='pendente').first()
+    
+    if solicitacao_respondida:
+        notificacao = solicitacao_respondida
+    
+    return render(request, "inicio.html", {'notificacao': notificacao})
 
 
 def testegerencia(request):
@@ -97,7 +109,7 @@ def perfil(request):
         'password_form': password_form,
         'foto_form': foto_form,
         'perfil_usuario': perfil_usuario,
-        'tab': tab
+        'tab': tab,
     }
     return render(request, "perfil.html", context)
 
@@ -337,10 +349,11 @@ class AulaDeleteView(ProfessorRequiredMixin, LoginRequiredMixin, DeleteView):
         return context
 
 
-class CursoCadastradosListView(ListView):
+class CursoCadastradosListView(ProfessorRequiredMixin, LoginRequiredMixin, ListView):
     model = Curso
-    template_name = 'cursos_cadastrados.html'    
+    template_name = 'cursos_cadastrados.html'
+    context_object_name = 'object_list'
+    group_required = u'Professor'
 
     def get_queryset(self):
-        self.obejct_list = Curso.objects.filter(usuario=self.request.user).order_by('-data_criacao')
-        return self.obejct_list
+        return Curso.objects.filter(usuario=self.request.user).order_by('-data_criacao')

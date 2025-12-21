@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'infohelp.context_processors.perfil_usuario',
+                'infohelp.context_processors.solicitacoes_pendentes',
             ],
         },
     },
