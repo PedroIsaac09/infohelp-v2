@@ -120,8 +120,14 @@
                     {% if request.user.is_authenticated %}
                     <a 
                         href="{% url 'perfil' %}"
-                        class="w-10 h-10 rounded-full bg-cover bg-center"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCn90S3DHk77amLnctQ25OcM6KJ4X4BGMcJi8uLMuTflN42BtLJlpJFn8ixGWpr-YZdEUkwYqWvVTm-ANpZSo5LFYqRXXOKSPkWqNHI4xN_tSnYV9OElE0lYydgclujLFzmsxI572R6aRjOYj-pTBwv9uIepRwg6dYGN8w_37_5kdgXZ4fTbPNaNwtzEm0AZvQCi5XcPC2bZsKjLwD69Pam_TEL8W0J91um20O9EYYjrPUInxqyPH6juzbR_kyV_q5SCOGnc-IjoHg');'>
+                        class="w-10 h-10 rounded-full bg-cover bg-center border-2 border-primary hover:border-primary/80 transition"
+                        {% if perfil_usuario and perfil_usuario.foto %}
+                            style='background-image: url("{{ perfil_usuario.foto.url }}");'
+                        {% else %}
+                            style='background-image: url("https://via.placeholder.com/40");'
+                        {% endif %}
+                        title="Ir para perfil"
+                    >
                     </a>
                     {% else %}
                     <a href="{% url 'login' %}?next={{ request.path }}" 

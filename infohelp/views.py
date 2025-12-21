@@ -47,8 +47,59 @@ def testegerencia(request):
     return render(request, "gerencia/pagina_gerencia.html")
 
 
+@login_required
 def perfil(request):
-    return render(request, "perfil.html")
+    from usuarios.forms import UserProfileForm, UserPasswordChangeForm, PerfilFotoForm
+    from usuarios.models import PerfilUsuario
+    from django.contrib import messages
+    
+    # Garanta que o perfil existe
+    perfil_usuario, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
+    
+    profile_form = None
+    password_form = None
+    foto_form = None
+    tab = request.GET.get('tab', 'perfil')
+    
+    if request.method == 'POST':
+        if 'profile_submit' in request.POST:
+            # Processa formulário de perfil (nome, email, telefone, localizacao) E foto se enviada
+            profile_form = UserProfileForm(request.POST, instance=perfil_usuario)
+            foto_form = PerfilFotoForm(request.POST, request.FILES, instance=perfil_usuario)
+            
+            if profile_form.is_valid() and foto_form.is_valid():
+                profile_form.save()
+                foto_form.save()
+                messages.success(request, 'Perfil e foto atualizados com sucesso!')
+                return redirect('perfil')
+            else:
+                password_form = UserPasswordChangeForm(request.user)
+        elif 'password_submit' in request.POST:
+            password_form = UserPasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                # Atualiza a sessão para evitar logout
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Senha alterada com sucesso!')
+                tab = 'seguranca'
+            else:
+                tab = 'seguranca'
+            profile_form = UserProfileForm(instance=perfil_usuario)
+            foto_form = PerfilFotoForm(instance=perfil_usuario)
+    else:
+        profile_form = UserProfileForm(instance=perfil_usuario)
+        password_form = UserPasswordChangeForm(request.user)
+        foto_form = PerfilFotoForm(instance=perfil_usuario)
+    
+    context = {
+        'profile_form': profile_form,
+        'password_form': password_form,
+        'foto_form': foto_form,
+        'perfil_usuario': perfil_usuario,
+        'tab': tab
+    }
+    return render(request, "perfil.html", context)
 
 
 

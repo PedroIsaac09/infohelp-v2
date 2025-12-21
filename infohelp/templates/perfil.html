@@ -3,9 +3,7 @@
 {% block title %}Perfil - InfoHelp{% endblock title %}
 
 {% block content %}
-    <main
-          class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
-        >
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div class="flex flex-wrap justify-between gap-3 mb-8">
             <div class="flex min-w-72 flex-col gap-2">
               <p
@@ -21,34 +19,42 @@
             </div>
           </div>
 
+          {% if messages %}
+            {% for message in messages %}
+              <div class="mb-4 p-4 rounded-lg bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+
           <div class="flex flex-col md:flex-row gap-8 lg:gap-12">
             <!-- Side Navigation -->
             <aside class="w-full md:w-1/4 lg:w-1/5">
               <div class="flex flex-col gap-2">
                 <a
-                  class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 dark:bg-primary/30"
-                  href="#"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg {% if tab == 'perfil' %}bg-primary/20 dark:bg-primary/30{% else %}hover:bg-slate-100 dark:hover:bg-slate-800{% endif %}"
+                  href="{% url 'perfil' %}?tab=perfil"
                 >
                   <span
-                    class="material-symbols-outlined text-primary text-2xl"
+                    class="material-symbols-outlined {% if tab == 'perfil' %}text-primary{% else %}text-slate-600 dark:text-slate-300{% endif %} text-2xl"
                     style="font-variation-settings: 'FILL' 1"
                     >person</span
                   >
-                  <p class="text-primary text-sm font-medium leading-normal">
+                  <p class="{% if tab == 'perfil' %}text-primary{% else %}text-slate-700 dark:text-slate-300{% endif %} text-sm font-medium leading-normal">
                     Editar Perfil
                   </p>
                 </a>
 
                 <a
-                  class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
-                  href="#"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg {% if tab == 'seguranca' %}bg-primary/20 dark:bg-primary/30{% else %}hover:bg-slate-100 dark:hover:bg-slate-800{% endif %}"
+                  href="{% url 'perfil' %}?tab=seguranca"
                 >
                   <span
-                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 text-2xl"
+                    class="material-symbols-outlined {% if tab == 'seguranca' %}text-primary{% else %}text-slate-600 dark:text-slate-300{% endif %} text-2xl"
                     >lock</span
                   >
                   <p
-                    class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal"
+                    class="{% if tab == 'seguranca' %}text-primary{% else %}text-slate-700 dark:text-slate-300{% endif %} text-sm font-medium leading-normal"
                   >
                     Segurança
                   </p>
@@ -93,149 +99,397 @@
               class="flex-1 bg-white dark:bg-slate-900/50 p-6 sm:p-8 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
             >
               <div class="flex flex-col gap-8">
-                <div class="flex items-center gap-6">
-                  <div class="relative">
-                    <div
-                      class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-24 border-2 border-white dark:border-slate-900 shadow-md"
-                      data-alt="Avatar de Ana Lúcia"
-                      style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBqaANcnIuXLkVl6IWXOX-yygKAXCcED6EEj81bS358T9lMnFEAM_kpBPOpeOVf2YfsVDpxiHsisSX2bJkI88oTk7dCvANkQziPoIM9bUp4-k69Jmee0GlXHWVuS6BNkL95jEsnv8fmSwMR8M2Ie7MKeEHxQQtpVtTvwnskhU4MOYy1sk800iooxfOxbJZk7OXAx9dgNvdC1_3zR35Z7u1X03EQp1vbXYpFVcDCE0rEvPogxlmEuBm7jQOFtfTGhQOmpn-iVhU6ZYg");'
-                    ></div>
+                {% if tab == 'perfil' %}
+                  <!-- FORMULÁRIO DE PERFIL -->
+                  <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_submit" value="1">
 
-                    <button
-                      class="absolute bottom-0 right-0 flex items-center justify-center size-8 rounded-full bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-800 hover:bg-slate-900 dark:hover:bg-white border-2 border-white dark:border-slate-900"
-                    >
-                      <span class="material-symbols-outlined text-base"
-                        >edit</span
-                      >
-                    </button>
+                    <!-- Seção de Foto -->
+                    <div class="flex items-center gap-6 mb-8">
+                      <div class="relative">
+                        {% if perfil_usuario.foto %}
+                          <img 
+                            id="perfil-foto-thumb"
+                            src="{{ perfil_usuario.foto.url }}" 
+                            alt="Foto de Perfil"
+                            data-full="{{ perfil_usuario.foto.url }}"
+                            class="size-24 rounded-full border-2 border-white dark:border-slate-900 shadow-md object-cover cursor-zoom-in hover:ring-4 ring-primary/40 transition"
+                            role="button"
+                            tabindex="0"
+                            aria-label="Ver foto de perfil em tamanho maior"
+                          />
+                        {% else %}
+                          <div class="size-24 rounded-full border-2 border-white dark:border-slate-900 shadow-md bg-slate-300 dark:bg-slate-600 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-4xl text-slate-500">person</span>
+                          </div>
+                        {% endif %}
+
+                        <label for="foto_input" class="absolute bottom-0 right-0 flex items-center justify-center size-8 rounded-full bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-800 hover:bg-slate-900 dark:hover:bg-white border-2 border-white dark:border-slate-900 cursor-pointer transition">
+                          <span class="material-symbols-outlined text-base">edit</span>
+                        </label>
+                      </div>
+
+                      <div>
+                        <h3 class="text-slate-800 dark:text-slate-100 text-xl font-bold leading-tight tracking-[-0.015em]">
+                          Alterar Foto de Perfil
+                        </h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal mt-1">
+                          PNG, JPG ou GIF até 10MB.
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- Input de foto oculto -->
+                    <input type="file" id="foto_input" name="foto" accept="image/*" class="hidden" />
+
+                    <!-- Aviso de foto selecionada -->
+                    <div id="foto_aviso" style="display: none;" class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                      <p class="text-blue-800 dark:text-blue-200 text-sm">
+                        <strong>Foto selecionada:</strong> <span id="foto_nome"></span>
+                      </p>
+                    </div>
+
+                    <!-- Modal de visualização da foto -->
+                    <div id="foto-modal" style="display: none;" class="fixed inset-0 bg-black/70 dark:bg-black/80 flex items-center justify-center z-50 p-4">
+                      <div class="relative max-w-3xl w-full flex justify-center">
+                        <img id="foto-modal-img" src="" alt="Visualização da foto de perfil" class="max-h-[80vh] w-auto rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 bg-slate-900/40 object-contain" />
+                        <button type="button" id="foto-modal-close" class="absolute -top-3 -right-3 flex items-center justify-center size-10 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 shadow-lg border border-slate-200 dark:border-slate-700 hover:scale-105 transition" aria-label="Fechar visualização da foto">
+                          <span class="material-symbols-outlined">close</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <hr class="border-slate-200 dark:border-slate-800 mb-8" />
+
+                    <!-- Informações Pessoais -->
+                    <section>
+                      <h2 class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mb-4">
+                        Informações Pessoais
+                      </h2>
+
+                      <div class="grid grid-cols-1 gap-6">
+                        <div>
+                          <label for="first_name" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nome Completo
+                          </label>
+                          {{ profile_form.first_name }}
+                          {% if profile_form.first_name.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ profile_form.first_name.errors }}</div>
+                          {% endif %}
+                        </div>
+
+                        <div>
+                          <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Email
+                          </label>
+                          {{ profile_form.email }}
+                          {% if profile_form.email.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ profile_form.email.errors }}</div>
+                          {% endif %}
+                        </div>
+
+                        <div>
+                          <label for="telefone" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Número de Telefone <span class="text-slate-500 dark:text-slate-400 text-xs">(Opcional)</span>
+                          </label>
+                          {{ profile_form.telefone }}
+                          {% if profile_form.telefone.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ profile_form.telefone.errors }}</div>
+                          {% endif %}
+                        </div>
+
+                        <div>
+                          <label for="localizacao" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Localização <span class="text-slate-500 dark:text-slate-400 text-xs">(Opcional)</span>
+                          </label>
+                          {{ profile_form.localizacao }}
+                          {% if profile_form.localizacao.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ profile_form.localizacao.errors }}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </section>
+
+                    <!-- Botões de Ação -->
+                    <div class="flex justify-end gap-3 pt-8">
+                      <a href="{% url 'inicio' %}" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5">
+                        Cancelar
+                      </a>
+
+                      <button type="submit" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white hover:bg-primary/90 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5">
+                        Salvar Alterações
+                      </button>
+                    </div>
+                  </form>
+
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      // Mostrar nome do arquivo quando selecionado
+                      const fotoInput = document.getElementById('foto_input');
+                      const fotoAviso = document.getElementById('foto_aviso');
+                      const fotoNome = document.getElementById('foto_nome');
+                      if (fotoInput && fotoAviso && fotoNome) {
+                        fotoInput.addEventListener('change', function() {
+                          if (this.files.length > 0) {
+                            fotoNome.textContent = this.files[0].name;
+                            fotoAviso.style.display = 'block';
+                          }
+                        });
+                      }
+
+                      // Modal de visualização da foto
+                      const thumb = document.getElementById('perfil-foto-thumb');
+                      const modal = document.getElementById('foto-modal');
+                      const modalImg = document.getElementById('foto-modal-img');
+                      const closeBtn = document.getElementById('foto-modal-close');
+
+                      const openModal = () => {
+                        if (!thumb || !thumb.dataset.full || !modal || !modalImg) return;
+                        modalImg.src = thumb.dataset.full;
+                        modal.style.display = 'flex';
+                      };
+
+                      const closeModal = () => {
+                        if (modal) {
+                          modal.style.display = 'none';
+                        }
+                      };
+
+                      if (thumb && thumb.dataset.full) {
+                        thumb.addEventListener('click', openModal);
+                        thumb.addEventListener('keydown', function(e) {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openModal();
+                          }
+                        });
+                      }
+
+                      if (closeBtn) {
+                        closeBtn.addEventListener('click', closeModal);
+                      }
+
+                      if (modal) {
+                        modal.addEventListener('click', function(e) {
+                          if (e.target === modal) {
+                            closeModal();
+                          }
+                        });
+                      }
+
+                      document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+                          closeModal();
+                        }
+                      });
+                    });
+                  </script>
+
+                {% else %}
+                  <!-- FORMULÁRIO DE SEGURANÇA -->
+                  <form method="post" id="password-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="password_submit" value="1">
+
+                    <section>
+                      <h2 class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mb-4">
+                        Alterar Senha
+                      </h2>
+
+                      <div class="grid grid-cols-1 gap-6">
+                        <!-- Senha Atual -->
+                        <div>
+                          <label for="id_old_password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Senha Atual
+                          </label>
+                          <div class="relative">
+                            <input 
+                              type="password" 
+                              id="id_old_password"
+                              name="old_password"
+                              placeholder="••••••••"
+                              class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 pr-10"
+                              required
+                            />
+                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 toggle-password cursor-pointer transition" data-target="id_old_password" title="Mostrar/Ocultar Senha">
+                              <span class="material-symbols-outlined text-xl">visibility</span>
+                            </button>
+                          </div>
+                          <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Digite a sua senha atual para confirmar as alterações</p>
+                          {% if password_form.old_password.errors %}
+                            <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700 mt-2">
+                              {% for error in password_form.old_password.errors %}
+                                <p class="text-red-700 dark:text-red-300 text-sm">{{ error }}</p>
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+                        </div>
+
+                        <!-- Nova Senha -->
+                        <div>
+                          <label for="id_new_password1" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Nova Senha
+                          </label>
+                          <div class="relative">
+                            <input 
+                              type="password" 
+                              id="id_new_password1"
+                              name="new_password1"
+                              placeholder="••••••••"
+                              class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 pr-10"
+                              required
+                            />
+                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 toggle-password cursor-pointer" data-target="id_new_password1">
+                              <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                          </div>
+                          {% if password_form.new_password1.errors %}
+                            <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700 mt-2">
+                              {% for error in password_form.new_password1.errors %}
+                                <p class="text-red-700 dark:text-red-300 text-sm">{{ error }}</p>
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+                          {% if password_form.new_password1.help_text %}
+                            <p class="text-slate-500 dark:text-slate-400 text-xs mt-2">{{ password_form.new_password1.help_text|safe }}</p>
+                          {% endif %}
+                        </div>
+
+                        <!-- Confirmar Senha -->
+                        <div>
+                          <label for="id_new_password2" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                            Confirmar Nova Senha
+                          </label>
+                          <div class="relative">
+                            <input 
+                              type="password" 
+                              id="id_new_password2"
+                              name="new_password2"
+                              placeholder="••••••••"
+                              class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50 px-4 py-2 pr-10"
+                              required
+                            />
+                            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 toggle-password cursor-pointer" data-target="id_new_password2">
+                              <span class="material-symbols-outlined">visibility</span>
+                            </button>
+                          </div>
+                          {% if password_form.new_password2.errors %}
+                            <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700 mt-2">
+                              {% for error in password_form.new_password2.errors %}
+                                <p class="text-red-700 dark:text-red-300 text-sm">{{ error }}</p>
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+                        </div>
+
+                        {% if password_form.non_field_errors %}
+                          <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700 mb-4">
+                            <p class="text-red-800 dark:text-red-200 text-sm font-medium mb-2">Erro ao alterar senha:</p>
+                            {% for error in password_form.non_field_errors %}
+                              <p class="text-red-700 dark:text-red-300 text-sm">• {{ error }}</p>
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                      </div>
+                    </section>
+
+                    <!-- Botões de Ação -->
+                    <div class="flex justify-end gap-3 pt-8">
+                      <a href="{% url 'perfil' %}?tab=perfil" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5">
+                        Cancelar
+                      </a>
+
+                      <button type="button" id="submit-password-btn" class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white hover:bg-primary/90 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5">
+                        Alterar Senha
+                      </button>
+                    </div>
+                  </form>
+
+                  <!-- Modal de Confirmação -->
+                  <div id="confirm-modal" style="display: none;" class="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-sm shadow-xl border border-slate-200 dark:border-slate-700">
+                      <div class="flex items-center gap-3 mb-4">
+                        <span class="material-symbols-outlined text-yellow-500 text-2xl">warning</span>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Confirmar Alteração de Senha</h3>
+                      </div>
+                      
+                      <p class="text-slate-600 dark:text-slate-400 mb-6">
+                        Tem certeza que deseja alterar sua senha? Após confirmar, você precisará fazer login novamente com a nova senha.
+                      </p>
+
+                      <div class="flex gap-3">
+                        <button type="button" id="cancel-btn" class="flex-1 px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 font-medium transition">
+                          Cancelar
+                        </button>
+                        <button type="button" id="confirm-btn" class="flex-1 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 font-medium transition">
+                          Confirmar
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <h3
-                      class="text-slate-800 dark:text-slate-100 text-xl font-bold leading-tight tracking-[-0.015em]"
-                    >
-                      Alterar Foto de Perfil
-                    </h3>
-                    <p
-                      class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal mt-1"
-                    >
-                      PNG, JPG ou GIF até 10MB.
-                    </p>
-                  </div>
-                </div>
+                  <script>
+                    // Aguardar o DOM carregar completamente
+                    document.addEventListener('DOMContentLoaded', function() {
+                      // Toggle visibilidade de senhas
+                      const toggleButtons = document.querySelectorAll('.toggle-password');
+                      
+                      toggleButtons.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                          e.preventDefault();
+                          const targetId = this.getAttribute('data-target');
+                          const input = document.getElementById(targetId);
+                          const icon = this.querySelector('.material-symbols-outlined');
+                          
+                          if (input) {
+                            if (input.type === 'password') {
+                              input.type = 'text';
+                              icon.textContent = 'visibility_off';
+                              this.classList.add('text-primary');
+                              this.classList.remove('text-slate-600', 'dark:text-slate-400');
+                            } else {
+                              input.type = 'password';
+                              icon.textContent = 'visibility';
+                              this.classList.remove('text-primary');
+                              this.classList.add('text-slate-600', 'dark:text-slate-400');
+                            }
+                          }
+                        });
+                      });
 
-                <hr class="border-slate-200 dark:border-slate-800" />
+                      // Modal de confirmação
+                      const form = document.getElementById('password-form');
+                      const submitBtn = document.getElementById('submit-password-btn');
+                      const modal = document.getElementById('confirm-modal');
+                      const confirmBtn = document.getElementById('confirm-btn');
+                      const cancelBtn = document.getElementById('cancel-btn');
 
-                <!-- Personal Information Section -->
-                <section>
-                  <h2
-                    class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
-                  >
-                    Informações Pessoais
-                  </h2>
+                      if (submitBtn && form && modal) {
+                        submitBtn.addEventListener('click', function(e) {
+                          e.preventDefault();
+                          modal.style.display = 'flex';
+                        });
 
-                  <div class="grid grid-cols-1 gap-6">
-                    <div>
-                      <label
-                        for="fullName"
-                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
-                        >Nome Completo</label
-                      >
-                      <input
-                        id="fullName"
-                        type="text"
-                        placeholder="Seu nome completo"
-                        value="{{ request.user }}"
-                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
-                      />
-                    </div>
+                        confirmBtn.addEventListener('click', function() {
+                          modal.style.display = 'none';
+                          form.submit();
+                        });
 
-                    <div>
-                      <label
-                        for="email"
-                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
-                        >Email</label
-                      >
-                      <input
-                        id="email"
-                        type="email"
-                        readonly
-                        value="ana.lucia@email.com"
-                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed"
-                      />
-                    </div>
-                  </div>
-                </section>
+                        cancelBtn.addEventListener('click', function() {
+                          modal.style.display = 'none';
+                        });
 
-                <hr class="border-slate-200 dark:border-slate-800" />
-
-                <!-- Security Section -->
-                <section>
-                  <h2
-                    class="text-slate-800 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
-                  >
-                    Alterar Senha
-                  </h2>
-
-                  <div class="grid grid-cols-1 gap-6">
-                    <div>
-                      <label
-                        for="currentPassword"
-                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
-                        >Senha Atual</label
-                      >
-                      <input
-                        id="currentPassword"
-                        type="password"
-                        placeholder="••••••••"
-                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        for="newPassword"
-                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
-                        >Nova Senha</label
-                      >
-                      <input
-                        id="newPassword"
-                        type="password"
-                        placeholder="••••••••"
-                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        for="confirmPassword"
-                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
-                        >Confirmar Nova Senha</label
-                      >
-                      <input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="••••••••"
-                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:border-primary focus:ring-primary focus:ring-opacity-50"
-                      />
-                    </div>
-                  </div>
-                </section>
-
-                <!-- Action Buttons -->
-                <div class="flex justify-end gap-3 pt-4">
-                  <button
-                    class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5"
-                  >
-                    Cancelar
-                  </button>
-
-                  <button
-                    class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-primary text-white hover:bg-primary/90 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-5"
-                  >
-                    Salvar Alterações
-                  </button>
-                </div>
+                        // Fechar modal ao clicar fora
+                        modal.addEventListener('click', function(e) {
+                          if (e.target === modal) {
+                            modal.style.display = 'none';
+                          }
+                        });
+                      }
+                    });
+                  </script>
+                {% endif %}
               </div>
             </div>
             <!-- End main card -->
